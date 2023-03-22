@@ -1,0 +1,99 @@
+:root {
+  --black: rgb(6, 17, 60);
+  --main: rgb(255, 140, 50);
+  --grey: rgb(221, 221, 221);
+  --space: rgb(252, 252, 252);
+  --orange-hover: rgb(207, 109, 33);
+  --grey-hover: rgb(177, 177, 177);
+  --space-hover: rgb(253, 253, 253);
+}
+
+a {
+  color: var(--main);
+}
+
+a:hover {
+  color: rgb(255, 111, 0);
+}
+
+body.theme-dark a {
+  color: var(--main);
+}
+
+body.theme-dark a:hover {
+  color: rgb(255, 111, 0);
+}
+
+body.theme-light {
+  background-color: rgb(241, 239, 239);
+}
+
+.sidebar-wrapper {
+  background-color: rgb(253, 253, 253);
+}
+
+body.theme-dark .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link {
+  background-color: var(--main);
+}
+
+.sidebar-wrapper .menu .sidebar-item.active > .sidebar-link {
+  background-color: var(--main);
+}
+
+body.theme-dark .form-check-input:checked {
+  background-color: rgb(255, 140, 50);
+  border-color: rgb(252, 132, 41);
+}
+
+.logo {
+  color: rgb(252, 132, 41);
+  font-size: 1.5rem;
+  text-align: center;
+  line-height: 1;
+}
+
+.logo:hover {
+  color: rgb(0, 0, 0);
+}
+
+.form-control:focus,
+.form-select:focus,
+body.theme-dark .form-control:focus,
+body.theme-dark .form-select:focus {
+  border-color: rgb(253, 185, 133);
+  box-shadow: 0 0 0 0.25rem rgb(255 140 50 / 25%);
+}
+
+.form-select > option:hover {
+  background-color: rgb(255, 140, 50) !important;
+}
+
+.btn-orange {
+  background-color: rgb(255, 140, 50) !important;
+  color: rgb(221, 221, 221) !important;
+  transition: 0.3s;
+}
+
+.btn-orange:hover {
+  background-color: rgba(255, 139, 50, 0.8);
+  color: rgb(221, 221, 221);
+}
+
+.choices__list--multiple .choices__item {
+  background-color: rgba(255, 139, 50, 0.7) !important;
+  border-color: rgba(255, 139, 50, 1) !important;
+}
+
+.sidebar-wrapper .menu .sidebar-link:hover {
+  background-color: rgba(255, 203, 162, 0.6);
+}
+
+body.theme-dark #main.main-layout,
+#main.main-layout {
+  padding: 0;
+  transition: margin-left .5s ease-out;
+}
+
+.main-content {
+  padding: 2rem;
+}
