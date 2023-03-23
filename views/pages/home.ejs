@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <%- include("../partials/stylesheet"); %> <%- include("../partials/head");
-    %>
+    <%- include("../partials/stylesheet"); %>
+    <%- include("../partials/head"); %>
     <title><%= title %></title>
   </head>
 
@@ -81,9 +81,7 @@
                     <div class="user-menu d-flex">
                       <div class="user-name text-end me-3 d-none d-md-block">
                         <h6 class="mb-0 text-gray-600"><%= fullName %></h6>
-                        <p class="mb-0 text-sm text-gray-600">
-                          <%= roleName %>
-                        </p>
+                        <p class="mb-0 text-sm text-gray-600"><%= roleName %></p>
                       </div>
                       <div class="user-img d-flex align-items-center">
                         <div class="avatar avatar-md">
@@ -116,9 +114,9 @@
           <div class="page-title">
             <div class="row">
               <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Account</h3>
+                <h3>Home</h3>
                 <p class="text-subtitle text-muted">
-                  Halaman untuk menampilakan detail akun
+                  Halaman dashboard SUPPORT AGC
                 </p>
               </div>
               <div class="col-12 col-md-6 order-md-2 order-first">
@@ -138,86 +136,16 @@
               </div>
             </div>
           </div>
-          <section id="basic-vertical-layouts">
-            <div class="row match-height justify-content-center">
-              <div class="col-md-6 col-12">
-                <div class="card">
-                  <div class="card-content">
-                    <div class="card-body">
-                      <form class="form form-vertical">
-                        <div class="form-body">
-                          <div class="row">
-                            <div class="col-12">
-                              <div class="form-group has-icon-left">
-                                <label for="nama-lengkap"
-                                  >Nama Lengkap</label
-                                >
-                                <div class="position-relative">
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Nama Lengkap"
-                                    id="nama-lengkap"
-                                    name="fullname"
-                                  />
-                                  <div class="form-control-icon">
-                                    <i class="bi bi-person"></i>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-12">
-                              <div class="form-group has-icon-left">
-                                <label for="email-user">Email</label>
-                                <div class="position-relative">
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Email"
-                                    id="email-user"
-                                  />
-                                  <div class="form-control-icon">
-                                    <i class="bi bi-envelope"></i>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-12">
-                              <div class="form-group has-icon-left">
-                                <label for="password-id-icon">Password</label>
-                                <div class="position-relative">
-                                  <input
-                                    type="password"
-                                    class="form-control"
-                                    placeholder="Password"
-                                    id="password-id-icon"
-                                  />
-                                  <div class="form-control-icon">
-                                    <i class="bi bi-lock"></i>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-12 d-flex justify-content-center">
-                              <button
-                                type="submit"
-                                class="btn btn-primary me-1 mb-1"
-                              >
-                                Submit
-                              </button>
-                              <button
-                                type="reset"
-                                class="btn btn-light-secondary me-1 mb-1"
-                              >
-                                Reset
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
+          <section class="section">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Default Layout</h4>
+              </div>
+              <div class="card-body">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam,
+                commodi? Ullam quaerat similique iusto temporibus, vero aliquam
+                praesentium, odit deserunt eaque nihil saepe hic deleniti?
+                Placeat delectus quibusdam ratione ullam!
               </div>
             </div>
           </section>
