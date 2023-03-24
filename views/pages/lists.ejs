@@ -28,31 +28,31 @@
         </div>
         <div class="sidebar-menu">
           <ul class="menu">
-            <li class="sidebar-item active">
+            <li class="sidebar-item <%= activePage === "Home" ? "active" : "" %>">
               <a href="/dashboard" class="sidebar-link">
                 <i class="bi bi-house"></i>
                 <span>Home</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <%= activePage === "Grab" ? "active" : "" %>">
               <a href="/dashboard/manga" class="sidebar-link">
                 <i class="bi bi-table"></i>
                 <span>Grab Manga</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <%= activePage === "Lists" ? "active" : "" %>">
               <a href="/dashboard/lists" class="sidebar-link">
                 <i class="bi bi-list-stars"></i>
                 <span>List Manga</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <%= activePage === "Setting" ? "active" : "" %>">
               <a href="/dashboard/settings" class="sidebar-link">
                 <i class="bi bi-sliders2"></i>
                 <span>Auto Publish Setting</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <%= activePage === "Account" ? "active" : "" %>">
               <a href="/dashboard/account" class="sidebar-link">
                 <i class="bi bi-people"></i>
                 <span>Account</span>
@@ -106,8 +106,8 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
               <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Layout Default</li>
+                  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><%= activePage %></li>
                 </ol>
               </nav>
             </div>

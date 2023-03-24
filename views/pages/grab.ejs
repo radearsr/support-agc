@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <%- include("../partials/stylesheet"); %> <%- include("../partials/head");
     %>
+    <link
+      rel="stylesheet"
+      href="/assets/extensions/choices.js/public/assets/styles/choices.css"
+    />
     <title><%= title %></title>
   </head>
 
@@ -33,31 +37,31 @@
           </div>
           <div class="sidebar-menu">
             <ul class="menu">
-              <li class="sidebar-item active">
+              <li class="sidebar-item <%= activePage === "Home" ? "active" : "" %>">
                 <a href="/dashboard" class="sidebar-link">
                   <i class="bi bi-house"></i>
                   <span>Home</span>
                 </a>
               </li>
-              <li class="sidebar-item">
+              <li class="sidebar-item <%= activePage === "Grab" ? "active" : "" %>">
                 <a href="/dashboard/manga" class="sidebar-link">
                   <i class="bi bi-table"></i>
                   <span>Grab Manga</span>
                 </a>
               </li>
-              <li class="sidebar-item">
+              <li class="sidebar-item <%= activePage === "Lists" ? "active" : "" %>">
                 <a href="/dashboard/lists" class="sidebar-link">
                   <i class="bi bi-list-stars"></i>
                   <span>List Manga</span>
                 </a>
               </li>
-              <li class="sidebar-item">
+              <li class="sidebar-item <%= activePage === "Setting" ? "active" : "" %>">
                 <a href="/dashboard/settings" class="sidebar-link">
                   <i class="bi bi-sliders2"></i>
                   <span>Auto Publish Setting</span>
                 </a>
               </li>
-              <li class="sidebar-item">
+              <li class="sidebar-item <%= activePage === "Account" ? "active" : "" %>">
                 <a href="/dashboard/account" class="sidebar-link">
                   <i class="bi bi-people"></i>
                   <span>Account</span>
@@ -120,145 +124,71 @@
                 </p>
               </div>
               <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav
-                  aria-label="breadcrumb"
-                  class="breadcrumb-header float-start float-lg-end"
-                >
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                   <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                      <a href="/dashboard">Dashboard</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                      Layout Default
-                    </li>
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><%= activePage %></li>
                   </ol>
                 </nav>
               </div>
             </div>
           </div>
-          <section id="multiple-column-form">
+          <section>
             <div class="row match-height">
               <div class="col-12">
                 <div class="card">
                   <div class="card-content">
                     <div class="card-body">
                       <form class="form">
-                        <h4 class="card-title">Setting AGC</h4>
+                        <h4 class="card-title">Opsi Grabbing</h4>
                         <div class="row">
-                          <div class="col-md-6 col-12">
+                          <div class="col-md-8 col-12">
                             <div class="form-group">
-                              <label for="url-agc">Link Halaman AGC</label>
-                              <input
-                                type="url"
-                                id="url-agc"
-                                class="form-control"
-                                placeholder="https://supportagc.com"
-                                name="urlDashboard"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-6 col-12">
-                            <div class="form-group">
-                              <label for="email-agc">Email</label>
-                              <input
-                                type="email"
-                                id="email-agc"
-                                class="form-control"
-                                placeholder="admin@supportagc.com"
-                                name="emailDashboard"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-6 col-12">
-                            <div class="form-group">
-                              <label for="password-agc">Password</label>
-                              <input
-                                type="password"
-                                id="password-agc"
-                                class="form-control"
-                                name="passwordDashboard"
-                                placeholder="iloveyou"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <h4 class="card-title">Setting Notifikasi</h4>
-                        <div class="row">
-                          <div class="col-md-6 col-12">
-                            <div class="form-group">
-                              <label for="first-name-column"
-                                >ID Chat Telegram</label
-                              >
-                              <input
-                                type="number"
-                                class="form-control"
-                                placeholder="12341234"
-                                name="idTelegram"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <h4 class="card-title">Setting Schedule</h4>
-                        <div class="row">
-                          <div class="col-md-6 col-12">
-                            <div class="form-group">
-                              <label for="tipe-schedule">Tipe Schedule</label>
+                              <label for="url-agc">Link Sumber Grab</label>
                               <select id="tipe-schedule" class="form-select">
-                                <option selected>Off</option>
-                                <option value="perhari">Tiap Hari</option>
-                                <option value="perjam">Tiap Jam</option>
-                                <option value="permenit">Tiap Menit</option>
+                                <option selected>Pilih</option>
+                                <option value="https://kiryu.id">
+                                  https://kiryuu.id
+                                </option>
                               </select>
                             </div>
                           </div>
-                          <div class="col-md-6 col-12">
+                          <div class="col-md-4 col-12">
                             <div class="form-group">
-                              <label for="action-count">Tiap Aksi Akan Publish Berapa Data</label>
-                              <div class="input-group">
-                                <input
-                                  type="number"
-                                  class="form-control"
-                                  id="action-count"
-                                  placeholder="1"
-                                  name="actionCount"
-                                />
-                              </div>
+                              <label for="tipe-grabing">Tipe Grabbing</label>
+                              <select id="tipe-grabing" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="all">Semua</option>
+                                <option value="unit">Satuan</option>
+                              </select>
                             </div>
                           </div>
-                          <div class="col-md-6 col-12">
-                            <div class="form-group action-value perhari d-none">
-                              <label for="field-perhari">Aksi Tiap Pukul</label>
-                              <div class="input-group">
-                                <input
-                                  type="time"
-                                  class="form-control"
-                                  id="field-perhari"
-                                  placeholder="Username"
-                                />
-                                <div class="input-group-text">WIB</div>
-                              </div>
+                        </div>
+                        <h4 class="card-title title-more-option d-none">Opsi Lanjutan</h4>
+                        <div class="row more-option all d-none">
+                          <div class="col-md-5 col-12">
+                            <div class="form-group">
+                              <label for="url-agc">Mengandung Karakter Awal</label>
+                              <select id="tipe-schedule" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="https://kiryu.id">
+                                  A - Z
+                                </option>
+                              </select>
                             </div>
-                            <div class="form-group action-value perjam d-none">
-                              <label for="field-perjam"
-                                >Aksi Tiap Berapa Jam Sekali</label
-                              >
-                              <input
-                                type="number"
-                                id="field-perjam"
-                                class="form-control"
-                                placeholder="1"
-                              />
-                            </div>
-                            <div class="form-group action-value permenit d-none">
-                              <label for="field-permenit"
-                                >Aksi Tiap Berapa Menit Sekali</label
-                              >
-                              <input
-                                type="number"
-                                class="form-control"
-                                placeholder="10"
-                                id="field-permenit"
-                              />
+                          </div>
+                          <div class="col-md-5 col-12">
+                            <div class="form-group">
+                              <label for="url-agc">Data yang akan tampil</label>
+                              <select id="tipe-schedule" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                              </select>
                             </div>
                           </div>
                           <div class="col-12 d-flex justify-content-center">
@@ -276,10 +206,114 @@
                             </button>
                           </div>
                         </div>
+                        <div class="row more-option unit d-none">
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label for="genre-anime">Genres</label>
+                              <select
+                                class="choices form-select"
+                                id="genre-anime"
+                                multiple="multiple"
+                              >
+                                <option value="square">Square</option>
+                                <option value="rectangle">Rectangle</option>
+                                <option value="rombo">Rombo</option>
+                                <option value="romboid">Romboid</option>
+                                <option value="trapeze">Trapeze</option>
+                                <option value="traible">Triangle</option>
+                                <option value="polygon">Polygon</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-4 col-12">
+                            <div class="form-group">
+                              <label for="url-agc">Status</label>
+                              <select id="tipe-schedule" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="https://kiryu.id">
+                                  https://kiryuu.id
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-4 col-12">
+                            <div class="form-group">
+                              <label for="url-agc">Type</label>
+                              <select id="tipe-schedule" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="https://kiryu.id">
+                                  https://kiryuu.id
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-4 col-12">
+                            <div class="form-group">
+                              <label for="url-agc">Order By</label>
+                              <select id="tipe-schedule" class="form-select">
+                                <option selected>Pilih</option>
+                                <option value="https://kiryu.id">
+                                  https://kiryuu.id
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-12 d-flex justify-content-center">
+                            <button
+                              type="submit"
+                              class="btn btn-primary me-1 mb-1"
+                            >
+                              Cari!
+                            </button>
+                            <button
+                              type="reset"
+                              class="btn btn-light-secondary me-1 mb-1"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </div>
                       </form>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+          <section class="section">
+            <div class="card">
+              <div class="card-body">
+                <table class="table table-striped" id="table1">
+                  <thead>
+                    <tr>
+                      <th>*</th>
+                      <th>Judul</th>
+                      <th>Link</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <input type="checkbox" class="form-check-input form-check-primary" checked="" name="customCheck" id="customColorCheck1">
+                      </td>
+                      <td>Lorem ipsum dolor sit amet, consectetur</td>
+                      <td>Lorem ipsum dolor sit amet, consectetur</td>
+                      <td>
+                        <select name="viewmenu" class="form-select status-episode-publish">
+                          <option value="1" selected="">Active</option>
+                          <option value="0">Non Active</option>
+                        </select>
+                      </td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-warning mb-1">
+                          INSERT
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </section>
@@ -295,18 +329,23 @@
     </div>
     <script src="/assets/js/bootstrap.js"></script>
     <script src="/assets/js/app.js"></script>
+    <script src="/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
+    <script src="/assets/js/pages/form-element-select.js"></script>
     <script>
-      const selectedTipeSchedule = document.querySelector("#tipe-schedule");
-      const fieldsActionValue = document.querySelectorAll(".action-value");
-      selectedTipeSchedule.addEventListener("change", (event) => {
-        fieldsActionValue.forEach((field) => {
-          if (field.classList.contains(event.target.value)) {
-            field.lastElementChild.setAttribute("name", "testing");
-            field.classList.remove("d-none");
-          } else if (field.classList.contains("d-none")) {
-            return;
+      const tipeGrabbing = document.querySelector("#tipe-grabing");
+      const moreOptions = document.querySelectorAll(".more-option");
+      const title = document.querySelector(".title-more-option");
+      tipeGrabbing.addEventListener("change", (event) => {
+        if (event.target.value === "Pilih") {
+          title.classList.add("d-none");
+        } else {
+          title.classList.remove("d-none");
+        }
+        moreOptions.forEach((moreOption) => {
+          if (moreOption.classList.contains(event.target.value)) {
+            moreOption.classList.remove("d-none");
           } else {
-            field.classList.add("d-none");
+            moreOption.classList.add("d-none");
           }
         });
       });

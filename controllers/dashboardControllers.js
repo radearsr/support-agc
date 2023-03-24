@@ -3,6 +3,7 @@ const homePageController = (req, res) => {
     title: "Home - Dashboard Support AGC",
     fullName: "Super Admin",
     roleName: "Administrator",
+    activePage: "Home",
   });
 };
 
@@ -11,6 +12,7 @@ const grabPageController = (req, res) => {
     title: "Grab - Dashboard Support AGC",
     fullName: "Super Admin",
     roleName: "Administrator",
+    activePage: "Grab",
   });
 };
 
@@ -19,6 +21,7 @@ const listsPageController = (req, res) => {
     title: "Lists - Dashboard Support AGC",
     fullName: "Super Admin",
     roleName: "Administrator",
+    activePage: "Lists",
   });
 };
 
@@ -27,6 +30,7 @@ const settingPageController = (req, res) => {
     title: "Setting - Dashboard Support AGC",
     fullName: "Super Admin",
     roleName: "Administrator",
+    activePage: "Setting",
   });
 };
 
@@ -35,6 +39,7 @@ const accountPageController = (req, res) => {
     title: "Account - Dashboard Support AGC",
     fullName: "Super Admin",
     roleName: "Administrator",
+    activePage: "Account",
   });
 };
 
