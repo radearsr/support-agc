@@ -24,11 +24,6 @@ module.exports = (sequelize) => {
       type: Sequelize.ENUM("Perhari", "Perjam", "Permenit"),
       allowNull: false,
     },
-    status: {
-      type: Sequelize.ENUM("0", "1"),
-      allowNull: false,
-      default: "1",
-    },
   });
 
   return Settings;
