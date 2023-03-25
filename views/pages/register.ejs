@@ -13,31 +13,44 @@
     <div class="row h-100 justify-content-center align-items-center">
       <div class="col-lg-5 col-12 shadow-lg">
         <div id="auth-left">
+          <% if (statusCode === 201) { %>
+            <div class="alert alert-success">
+              Register Berhasil <%= fullname %> silahkan <a class="alert-link" href="/login">login</a>
+            </div>
+          <% } else if (statusCode >= 400) { %>
+            <div class="alert alert-warning">
+              Register <%= msg %>
+            </div>
+          <% } else if (statusCode >= 500) {%>
+            <div class="alert alert-danger">
+              Register <%= msg %>
+            </div>
+          <% } %>
           <h1 class="auth-title">Daftar</h1>
           <p class="auth-subtitle mb-2">
             Daftar masukkan data diri anda dengan benar
           </p>
-          <form action="index.html">
+          <form action="/register" method="post" id="form-register">
             <div class="form-group position-relative has-icon-left mb-2">
-              <input type="text" name="username" class="form-control form-control-lg" placeholder="Nama Lengkap" />
+              <input type="text" name="fullname" class="form-control form-control-lg" placeholder="Nama Lengkap" autocomplete="off" required />
               <div class="form-control-icon">
                 <i class="bi bi-person"></i>
               </div>
             </div>
             <div class="form-group position-relative has-icon-left mb-2">
-              <input type="email" name="username" class="form-control form-control-lg" placeholder="Alamat Email" />
+              <input type="email" name="email" class="form-control form-control-lg" placeholder="Alamat Email" autocomplete="off" required />
               <div class="form-control-icon">
                 <i class="bi bi-envelope"></i>
               </div>
             </div>
             <div class="form-group position-relative has-icon-left mb-2">
-              <input type="text" name="password" class="form-control form-control-lg" placeholder="Password" />
+              <input type="text" name="password" class="form-control form-control-lg" placeholder="Password" autocomplete="off" required />
               <div class="form-control-icon">
                 <i class="bi bi-shield-lock"></i>
               </div>
             </div>
             <div class="form-group position-relative has-icon-left mb-2">
-              <input type="password" name="confirm-password" class="form-control form-control-lg" placeholder="Konfirmasi Password" />
+              <input type="password" name="confirmPassword" class="form-control form-control-lg" placeholder="Konfirmasi Password" autocomplete="off" required />
               <div class="form-control-icon">
                 <i class="bi bi-shield-plus"></i>
               </div>
@@ -56,6 +69,11 @@
       </div>
     </div>
   </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelector("#form-register").reset();
+    });
+  </script>
 </body>
 
 </html>

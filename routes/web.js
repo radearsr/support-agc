@@ -14,4 +14,7 @@ router
   .get("/dashboard/account", dashboardController.accountPageController)
   .get("/dashboard/settings", dashboardController.settingPageController);
 
+router
+  .post("/register", usersController.postRegisterController);
+
 module.exports = router;
