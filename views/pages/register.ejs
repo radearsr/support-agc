@@ -14,18 +14,14 @@
       <div class="col-lg-5 col-12 shadow-lg">
         <div id="auth-left">
           <% if (statusCode === 201) { %>
-            <div class="alert alert-success">
-              Register Berhasil <%= fullname %> silahkan <a class="alert-link" href="/login">login</a>
-            </div>
+          <div class="alert alert-light-success color-success">
+            Register Berhasil <%= msg %> silahkan <a class="alert-link" href="/login">login</a>
+          </div>
           <% } else if (statusCode >= 400) { %>
-            <div class="alert alert-warning">
-              Register <%= msg %>
-            </div>
-          <% } else if (statusCode >= 500) {%>
-            <div class="alert alert-danger">
-              Register <%= msg %>
-            </div>
-          <% } %>
+          <div class="alert alert-light-danger color-danger">
+            Register <%= msg %>
+          </div>
+          <% }%>
           <h1 class="auth-title">Daftar</h1>
           <p class="auth-subtitle mb-2">
             Daftar masukkan data diri anda dengan benar
@@ -44,7 +40,7 @@
               </div>
             </div>
             <div class="form-group position-relative has-icon-left mb-2">
-              <input type="text" name="password" class="form-control form-control-lg" placeholder="Password" autocomplete="off" required />
+              <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" autocomplete="off" required />
               <div class="form-control-icon">
                 <i class="bi bi-shield-lock"></i>
               </div>

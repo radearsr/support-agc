@@ -62,7 +62,7 @@ exports.createNewUser = async (payload) => {
 
 exports.getUserWhereEmail = async (email) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "SELECT id FROM users WHERE email=?";
+  const sqlString = "SELECT * FROM users WHERE email=?";
   const sqlEscapeVal = [email];
   console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);

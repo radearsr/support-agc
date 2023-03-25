@@ -15,6 +15,7 @@ router
   .get("/dashboard/settings", dashboardController.settingPageController);
 
 router
-  .post("/register", usersController.postRegisterController);
+  .post("/register", usersController.postRegisterController)
+  .post("/login", usersController.postLoginController);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const ClientError = require("../exceptions/ClientError");
 const intMysqlServices = require("../services/internalMysqlServices");
+const securityServices = require("../services/securityServices");
 
 const loginPageController = (req, res) => {
   res.render("pages/login", {
@@ -8,23 +9,25 @@ const loginPageController = (req, res) => {
 };
 
 const registerPageController = (req, res) => {
+  const { statusCode=200 , msg="" } = req.query;
+  console.log(req.query);
   return res.render("pages/register", {
     title: "Register - Support AGC",
-    statusCode: 200,
+    statusCode: parseFloat(statusCode),
+    msg,
   });
 };
 
 const postRegisterController = async (req, res) => {
   try {
     const payload = req.body;
-    console.log(payload);
     await intMysqlServices.checkAvailableEmail(payload.email);
-    const createdNewUser = await intMysqlServices.createNewUser(payload);
-    return res.render("pages/register", {
-      ...createdNewUser,
-      statusCode: 201,
-      title: "Register - Support AGC",
+    const hashedPassword = await securityServices.hashingPassword(payload.password);
+    const createdNewUser = await intMysqlServices.createNewUser({
+      ...payload,
+      password: hashedPassword,
     });
+    return res.redirect(`/register?statusCode=${201}&msg=${createdNewUser.fullname}`);
   } catch (error) {
     if (error instanceof ClientError) {
       res.statusCode = error.statusCode;
@@ -34,6 +37,7 @@ const postRegisterController = async (req, res) => {
         title: "Register - Support AGC",
       });
     }
+    console.log(error);
     res.statusCode = 500;
     return res.render("pages/register", {
       statusCode: 500,
@@ -43,8 +47,25 @@ const postRegisterController = async (req, res) => {
   }
 };
 
+const postLoginController = async (req, res) => {
+  try {
+    const payload = req.body;
+    const userCredential = await intMysqlServices.getUserWhereEmail(payload.email);
+    await securityServices.comparePassword(payload.password, userCredential.password);
+    res.redirect("/dashboard");
+  } catch (error) {
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      return res.redirect(`/login?statusCode=${error.statusCode}&msg=${error.message}`);
+    }
+    res.statusCode = 500;
+    return res.render(`/login?statusCode=500&msg=Terjadi kegagalan pada server`);
+  }
+};
+
 module.exports = {
   loginPageController,
   registerPageController,
-  postRegisterController
+  postRegisterController,
+  postLoginController,
 };
