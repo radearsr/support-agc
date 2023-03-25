@@ -13,6 +13,15 @@
     <div class="row h-100 justify-content-center align-items-center">
       <div class="col-lg-5 col-12 shadow-lg">
         <div id="auth-left">
+          <% if (statusCode === 200 && msg !== "") { %>
+          <div class="alert alert-light-success color-success">
+            <%= msg %>
+          </div>
+          <% } else if (statusCode >= 400) { %>
+          <div class="alert alert-light-danger color-danger">
+            <%= msg %>
+          </div>
+          <% }%>
           <h1 class="auth-title">Masuk</h1>
           <p class="auth-subtitle mb-2">
             Log in dengan data yang anda masukkan saat melakukan registrasi.

@@ -15,11 +15,11 @@
         <div id="auth-left">
           <% if (statusCode === 201) { %>
           <div class="alert alert-light-success color-success">
-            Register Berhasil <%= msg %> silahkan <a class="alert-link" href="/login">login</a>
+            <%= msg %> silahkan <a class="alert-link" href="/login">login</a>
           </div>
           <% } else if (statusCode >= 400) { %>
           <div class="alert alert-light-danger color-danger">
-            Register <%= msg %>
+            <%= msg %>
           </div>
           <% }%>
           <h1 class="auth-title">Daftar</h1>

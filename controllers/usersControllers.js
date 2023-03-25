@@ -2,20 +2,29 @@ const ClientError = require("../exceptions/ClientError");
 const intMysqlServices = require("../services/internalMysqlServices");
 const securityServices = require("../services/securityServices");
 
+const currentPageStatus = {
+  code: 200,
+  msg:"",
+};
+
 const loginPageController = (req, res) => {
   res.render("pages/login", {
     title: "Login - Support AGC",
+    statusCode: currentPageStatus.code,
+    msg: currentPageStatus.msg,
   });
+  currentPageStatus.code = 200;
+  currentPageStatus.msg = "";
 };
 
 const registerPageController = (req, res) => {
-  const { statusCode=200 , msg="" } = req.query;
-  console.log(req.query);
-  return res.render("pages/register", {
+  res.render("pages/register", {
     title: "Register - Support AGC",
-    statusCode: parseFloat(statusCode),
-    msg,
+    statusCode: currentPageStatus.code,
+    msg: currentPageStatus.msg,
   });
+  currentPageStatus.code = 200;
+  currentPageStatus.msg = "";
 };
 
 const postRegisterController = async (req, res) => {
@@ -27,23 +36,19 @@ const postRegisterController = async (req, res) => {
       ...payload,
       password: hashedPassword,
     });
-    return res.redirect(`/register?statusCode=${201}&msg=${createdNewUser.fullname}`);
+    currentPageStatus.code = 201;
+    currentPageStatus.msg = `Berhasil membuat akun dengan email ${payload.email}`;
+    return res.redirect("/register");
   } catch (error) {
     if (error instanceof ClientError) {
-      res.statusCode = error.statusCode;
-      return res.render("pages/register", {
-        statusCode: error.statusCode,
-        msg: error.message,
-        title: "Register - Support AGC",
-      });
+      currentPageStatus.code = error.statusCode;
+      currentPageStatus.msg = error.message;
+      return res.redirect("/register");
     }
     console.log(error);
-    res.statusCode = 500;
-    return res.render("pages/register", {
-      statusCode: 500,
-      msg: "Terjadi kegagalan pada server kami",
-      title: "Register - Support AGC",
-    });
+    currentPageStatus.code = 500;
+    currentPageStatus.msg = "terjadi kegagalan pada server kami";
+    return res.redirect("/register");
   }
 };
 
@@ -52,14 +57,18 @@ const postLoginController = async (req, res) => {
     const payload = req.body;
     const userCredential = await intMysqlServices.getUserWhereEmail(payload.email);
     await securityServices.comparePassword(payload.password, userCredential.password);
-    res.redirect("/dashboard");
+    currentPageStatus.code = 200;
+    currentPageStatus.msg = "Berhasil login";
+    return res.redirect("/dashboard");
   } catch (error) {
-    if (error instanceof ClientError) {
-      res.statusCode = error.statusCode;
-      return res.redirect(`/login?statusCode=${error.statusCode}&msg=${error.message}`);
+    if (error instanceof ClientError) {  
+      currentPageStatus.code = error.statusCode;
+      currentPageStatus.msg = error.message;
+      return res.redirect("/login");
     }
-    res.statusCode = 500;
-    return res.render(`/login?statusCode=500&msg=Terjadi kegagalan pada server`);
+    currentPageStatus.code = 500;
+    currentPageStatus.msg = "Terjadi kegagalan pada server kami"
+    return res.redirect("/login");
   }
 };
 

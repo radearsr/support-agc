@@ -8,7 +8,7 @@ const hashingPassword = async (plainText) => {
 
 const comparePassword = async (plainText, passwordHash) => {
   const result = await bcrypt.compare(plainText, passwordHash);
-  if (!result) throw new AuthenticationError("password yang anda masukkan salah, silahkan coba kembali");
+  if (!result) throw new AuthenticationError("Maaf, password yang anda masukkan salah, silahkan coba kembali");
 };
 
 module.exports = {

@@ -65,3 +65,7 @@ a.text-orange:hover {
 a.alert-link:hover {
   text-decoration: underline;
 }
+
+a.alert-link {
+  color: rgb(0, 155, 0);
+}
