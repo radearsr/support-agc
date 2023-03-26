@@ -125,7 +125,7 @@
               <div class="card">
                 <div class="card-content">
                   <div class="card-body">
-                    <form class="form">
+                    <form class="form" id="form-finder">
                       <h4 class="card-title">Opsi Grabbing</h4>
                       <div class="row">
                         <div class="col-md-8 col-12">
@@ -155,8 +155,8 @@
                         <div class="col-md-5 col-12">
                           <div class="form-group">
                             <label for="url-agc">Mengandung Karakter Awal</label>
-                            <select id="tipe-schedule" class="form-select">
-                              <option selected>Pilih</option>
+                            <select id="tipe-schedule" class="form-select" required>
+                              <option>Pilih</option>
                               <option value="https://kiryu.id">
                                 A - Z
                               </option>
@@ -166,7 +166,7 @@
                         <div class="col-md-5 col-12">
                           <div class="form-group">
                             <label for="url-agc">Data yang akan tampil</label>
-                            <select id="tipe-schedule" class="form-select">
+                            <select id="tipe-schedule" class="form-select" required>
                               <option selected>Pilih</option>
                               <option value="10">10</option>
                               <option value="20">20</option>
@@ -178,8 +178,8 @@
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
-                          <button type="submit" class="btn btn-primary me-1 mb-1">
-                            Submit
+                          <button type="submit" class="btn btn-primary me-1 mb-1 find-grab">
+                            Cari
                           </button>
                           <button type="reset" class="btn btn-light-secondary me-1 mb-1">
                             Reset
@@ -235,7 +235,7 @@
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
-                          <button type="submit" class="btn btn-primary me-1 mb-1">
+                          <button type="submit" class="btn btn-primary me-1 mb-1 find-grab">
                             Cari!
                           </button>
                           <button type="reset" class="btn btn-light-secondary me-1 mb-1">
@@ -301,25 +301,7 @@
   <script src="/assets/js/app.js"></script>
   <script src="/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
   <script src="/assets/js/pages/form-element-select.js"></script>
-  <script>
-    const tipeGrabbing = document.querySelector("#tipe-grabing");
-    const moreOptions = document.querySelectorAll(".more-option");
-    const title = document.querySelector(".title-more-option");
-    tipeGrabbing.addEventListener("change", (event) => {
-      if (event.target.value === "Pilih") {
-        title.classList.add("d-none");
-      } else {
-        title.classList.remove("d-none");
-      }
-      moreOptions.forEach((moreOption) => {
-        if (moreOption.classList.contains(event.target.value)) {
-          moreOption.classList.remove("d-none");
-        } else {
-          moreOption.classList.add("d-none");
-        }
-      });
-    });
-  </script>
+  <script src="/assets/js/pages/grabingPage.js"></script>
 </body>
 
 </html>
