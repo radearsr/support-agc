@@ -130,20 +130,21 @@
                       <div class="row">
                         <div class="col-md-8 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Link Sumber Grab</label>
-                            <select id="tipe-schedule" class="form-select">
-                              <option selected>Pilih</option>
+                            <label for="url-grabing">Link Sumber Grab</label>
+                            <select id="url-grabing" name="linkTarget" class="form-select">
+                              <option selected disabled>Pilih</option>
                               <option value="https://kiryu.id">
                                 https://kiryuu.id
                               </option>
                             </select>
+                            <span class="d-none">*Source grabbing is required</span>
                           </div>
                         </div>
                         <div class="col-md-4 col-12">
                           <div class="form-group">
                             <label for="tipe-grabing">Tipe Grabbing</label>
-                            <select id="tipe-grabing" class="form-select">
-                              <option selected>Pilih</option>
+                            <select id="tipe-grabing" class="form-select" name="type">
+                              <option selected disabled>Pilih</option>
                               <option value="all">Semua</option>
                               <option value="unit">Satuan</option>
                             </select>
@@ -154,20 +155,21 @@
                       <div class="row more-option all d-none">
                         <div class="col-md-5 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Mengandung Karakter Awal</label>
-                            <select id="tipe-schedule" class="form-select" required>
+                            <label for="first-char">Mengandung Karakter Awal</label>
+                            <select id="first-char" class="form-select" name="firstChar" required>
                               <option>Pilih</option>
-                              <option value="title">A - Z</option>
+                              <option value="all">A - Z</option>
                               <% for(let i = 65; i <= 90; i++) { %>
                                 <option value="<%= String.fromCharCode(i).toLowerCase() %>"><%= String.fromCharCode(i) %></option>
                               <% } %>
                             </select>
+                            <span class="d-none">*Contain first character is required</span>
                           </div>
                         </div>
                         <div class="col-md-5 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Data yang akan tampil</label>
-                            <select id="tipe-schedule" class="form-select" required>
+                            <label for="displayed-data">Data yang akan tampil</label>
+                            <select id="displayed-data" name="maxData" class="form-select" required>
                               <option selected>Pilih</option>
                               <option value="10">10</option>
                               <option value="20">20</option>
@@ -176,6 +178,7 @@
                               <option value="200">200</option>
                               <option value="500">500</option>
                             </select>
+                            <span class="d-none">*Count data is required</span>
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
