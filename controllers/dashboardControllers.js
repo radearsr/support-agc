@@ -26,16 +26,21 @@ const homePageController = async (req, res) => {
   }
 };
 
-const grabPageController = (req, res) => {
+const grabPageController = async (req, res) => {
   const {
     fullname,
     role,
   } = req.session;
+
+  const genres = await intMysqlServices.getDataAllGenres();
+  console.log(genres);
+  console.log(genres[0].id);
   res.render("pages/grab", {
     title: "Grab - Dashboard Support AGC",
     fullName: fullname,
     roleName: role,
     activePage: "Grab",
+    genres,
   });
 };
 

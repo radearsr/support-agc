@@ -157,9 +157,10 @@
                             <label for="url-agc">Mengandung Karakter Awal</label>
                             <select id="tipe-schedule" class="form-select" required>
                               <option>Pilih</option>
-                              <option value="https://kiryu.id">
-                                A - Z
-                              </option>
+                              <option value="title">A - Z</option>
+                              <% for(let i = 65; i <= 90; i++) { %>
+                                <option value="<%= String.fromCharCode(i).toLowerCase() %>"><%= String.fromCharCode(i) %></option>
+                              <% } %>
                             </select>
                           </div>
                         </div>
@@ -191,13 +192,9 @@
                           <div class="form-group">
                             <label for="genre-anime">Genres</label>
                             <select class="choices form-select" id="genre-anime" multiple="multiple">
-                              <option value="square">Square</option>
-                              <option value="rectangle">Rectangle</option>
-                              <option value="rombo">Rombo</option>
-                              <option value="romboid">Romboid</option>
-                              <option value="trapeze">Trapeze</option>
-                              <option value="traible">Triangle</option>
-                              <option value="polygon">Polygon</option>
+                              <% for(let i = 0; i < genres.length; i++) { %>
+                                <option value="<%= genres[i].id_genre %>"><%= genres[i].name %></option>
+                              <% } %>
                             </select>
                           </div>
                         </div>
@@ -206,9 +203,10 @@
                             <label for="url-agc">Status</label>
                             <select id="tipe-schedule" class="form-select">
                               <option selected>Pilih</option>
-                              <option value="https://kiryu.id">
-                                https://kiryuu.id
-                              </option>
+                              <option value="all">All</option>
+                              <option value="ongoing">Ongoing</option>
+                              <option value="completed">Completed</option>
+                              <option value="hiatus">Hiatus</option>
                             </select>
                           </div>
                         </div>
@@ -217,9 +215,12 @@
                             <label for="url-agc">Type</label>
                             <select id="tipe-schedule" class="form-select">
                               <option selected>Pilih</option>
-                              <option value="https://kiryu.id">
-                                https://kiryuu.id
-                              </option>
+                              <option value="all">All</option>
+                              <option value="manga">Manga</option>
+                              <option value="manhwa">Manhwa</option>
+                              <option value="manhua">Manhua</option>
+                              <option value="comic">Comic</option>
+                              <option value="novel">Novel</option>
                             </select>
                           </div>
                         </div>
@@ -228,9 +229,12 @@
                             <label for="url-agc">Order By</label>
                             <select id="tipe-schedule" class="form-select">
                               <option selected>Pilih</option>
-                              <option value="https://kiryu.id">
-                                https://kiryuu.id
-                              </option>
+                              <option value="default">Default</option>
+                              <option value="title">A-Z</option>
+                              <option value="titlereverse">Z-A</option>
+                              <option value="update">Update</option>
+                              <option value="latest">Added</option>
+                              <option value="popular">Populer</option>
                             </select>
                           </div>
                         </div>

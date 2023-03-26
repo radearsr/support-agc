@@ -1,16 +1,15 @@
+require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
-const path = require("path");
-const fs = require("fs");
 
-const getMangaWithSplitChar = async (character, maxData) => {
-  const { data } = await axios.get("https://kiryuu.id/manga/list-mode");
+const getMangaWithSplitChar = async (endpoint, character, maxData) => {
+  const { data } = await axios.get(`${endpoint}/manga/list-mode`);
   const $ = cheerio.load(data);
   const resultLists = [];
-  $(".series").each((_idx, el) => {
+  $(".series").each((idx, el) => {
     const title = $(el).text();
     const link = $(el).attr("href");
-    if (title.charAt(0) === character && _idx <= maxData) {
+    if ((title.charAt(0) === character) && (resultLists.length <= maxData)) {
       resultLists.push({
         title,
         link,
@@ -20,44 +19,24 @@ const getMangaWithSplitChar = async (character, maxData) => {
   return resultLists;
 };
 
-// (async () => {
-//   const { data } = await axios.get("https://kiryuu.id/manga/list-mode");
-//   // console.log(data);
-//   const $ = cheerio.load(data);
+const getMangaWithCategory = async (endpoint, genresId, status, type, order) => {
+  const mappedGenresId = genresId.map((id) => (`genre%5B%5D=${id}`));
+  const genresForUrl = mappedGenresId.join("&");
+  const { data } = await axios.get(`${endpoint}/manga?${genresForUrl}&status=${status}&type=${type}&order=${order}`);
+  const $ = cheerio.load(data);
+  const resultLists = [];
+  $(".bsx").each((_idx, el) => {
+    const title = $(el).children("a").attr("title");
+    const link = $(el).children("a").attr("href");
+    lists.push({
+      title,
+      link,
+    });
+  });
+  return resultLists;
+};
 
-//   const lists = [];
-
-//   $(".series").each((_idx, el) => {
-//     const title = $(el).text();
-//     const link = $(el).attr("href");
-//     if (title.charAt(0) === "A" && _idx <= 100) {
-//       lists.push({
-//         title,
-//         link,
-//       });
-//     }
-//   });
-//   console.log(lists);
-// })()
-
-(async () => {
-  const { data } = await axios.get("https://kiryuu.id/manga/?genre%5B%5D=37&genre%5B%5D=4&status=ongoing&type=manhua");
-  // console.log(data);
-  fs.writeFileSync(path.join(__dirname, "index.html"), data);
-  // console.log(data);
-  // const $ = cheerio.load(data);
-
-  // const lists = [];
-
-  // $(".series").each((_idx, el) => {
-  //   const title = $(el).text();
-  //   const link = $(el).attr("href");
-  //   if (title.charAt(0) === "A" && _idx <= 100) {
-  //     lists.push({
-  //       title,
-  //       link,
-  //     });
-  //   }
-  // });
-  console.log(lists);
-})()
+module.exports = {
+  getMangaWithSplitChar,
+  getMangaWithCategory,
+};

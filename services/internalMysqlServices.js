@@ -89,5 +89,15 @@ exports.updateUserProfile = async (userId, payload) => {
   console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal memperbarui profile");
-}
+};
+
+exports.getDataAllGenres = async () => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM manga_genres";
+  const results = await queryDatabase(conn, sqlString);
+  console.info(logging(sqlString));
+  if (results.length < 1) throw new InvariantError("Data genre tidak tersedia");
+  return results;
+};
+
 
