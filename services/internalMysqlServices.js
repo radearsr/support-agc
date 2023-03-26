@@ -1,5 +1,7 @@
 require("dotenv").config();
 const mysql = require("mysql");
+const AuthenticationError = require("../exceptions/AuthenticationError");
+const AuthorizationError = require("../exceptions/AuthorizationError");
 const InvariantError = require("../exceptions/InvariantError");
 
 const configDB = mysql.createPool({
@@ -69,4 +71,23 @@ exports.getUserWhereEmail = async (email) => {
   if (results.length < 1) throw new InvariantError("Gagal akun tidak tersedia");
   return results[0];
 };
+
+exports.getUserProfileByUserId = async (userId) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM users WHERE id=?";
+  const sqlEscapeVal = [userId];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (results.length < 1) throw new AuthorizationError("ID user tidak terdaftar");
+  return results[0];
+};
+
+exports.updateUserProfile = async (userId, payload) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "UPDATE users SET fullname=?, email=?, password=? WHERE id=?";
+  const sqlEscapeVal = [[payload.fullname], [payload.email], [payload.password], [userId]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (results.affectedRows < 1) throw new InvariantError("Gagal memperbarui profile");
+}
 

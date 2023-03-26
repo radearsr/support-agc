@@ -59,6 +59,9 @@ const postLoginController = async (req, res) => {
     await securityServices.comparePassword(payload.password, userCredential.password);
     currentPageStatus.code = 200;
     currentPageStatus.msg = "Berhasil login";
+    req.session.userId = userCredential.id;
+    req.session.fullname = userCredential.fullname;
+    req.session.role = userCredential.role;
     return res.redirect("/dashboard");
   } catch (error) {
     if (error instanceof ClientError) {  
@@ -72,9 +75,15 @@ const postLoginController = async (req, res) => {
   }
 };
 
+const logoutController = (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+};
+
 module.exports = {
   loginPageController,
   registerPageController,
   postRegisterController,
   postLoginController,
+  logoutController,
 };
