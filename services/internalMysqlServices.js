@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const AuthenticationError = require("../exceptions/AuthenticationError");
 const AuthorizationError = require("../exceptions/AuthorizationError");
 const InvariantError = require("../exceptions/InvariantError");
+const NotFoundError = require("../exceptions/NotFoundError");
 
 const configDB = mysql.createPool({
   host: process.env.INT_HOST,
@@ -102,11 +103,21 @@ exports.getDataAllGenres = async () => {
 
 exports.insertManga = async (values) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "INSERT INTO lists (title, link, status) VALUES ?";
+  const sqlString = "INSERT INTO lists (title, link, status, createdAt) VALUES ?";
   const sqlEscapeVal = [values];
   console.info(logging(sqlString, sqlEscapeVal));
   const insertedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal menambahakan manga baru");
   return insertedManga.insertId;
 };
+
+exports.getDataAllListsManga = async () => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC";
+  console.info(logging(sqlString));
+  const results = await queryDatabase(conn, sqlString);
+  if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
+  return results;
+};
+
 

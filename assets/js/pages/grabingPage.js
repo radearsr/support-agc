@@ -22,7 +22,7 @@ const createTableData = (results) => {
           </select>
         </td>
         <td class="text-center">
-          <button class="btn btn-sm btn-orange mb-1">
+          <button class="btn btn-sm btn-orange btn-insert mb-1">
             INSERT
           </button>
         </td>
@@ -50,6 +50,32 @@ const getDataManga = async (payload) => {
     return error;
   }
 };
+
+const insertListManga = async (targetEl) => {
+  const targetParentElement = targetEl.parentElement.parentElement;
+
+  const title = targetParentElement.querySelector("td:nth-child(2)").textContent;
+  const link = targetParentElement.querySelector("td:nth-child(3)").textContent;
+  const status = targetParentElement.querySelector("td:nth-child(4) > select").value;
+  console.log({ title, link, status });
+  const response = await fetch("/manga/add", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title, link, status}),
+  });
+  const result = await response.json();
+};
+
+const listsResultMangaAction = () => {
+  const buttonInserts = document.querySelectorAll(".btn-insert");
+  buttonInserts.forEach((btnIns) => {
+    btnIns.addEventListener("click", (event) => insertListManga(event.target));
+  });
+};
+
 
 tipeGrabbing.addEventListener("change", (event) => {
   if (event.target.value === "Pilih") {
@@ -121,6 +147,7 @@ formFinder.addEventListener("submit", async (event) => {
     if (listsManga.status === "success") {
       createTableData(listsManga.data);
       loadingElement.classList.add("d-none");
+      listsResultMangaAction();
     }
   } 
 });

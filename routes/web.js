@@ -13,7 +13,7 @@ router
   .get("/register",usersController.registerPageController)
   .get("/dashboard", middleware.checkUserCredentials, dashboardController.homePageController)
   .get("/dashboard/manga", dashboardController.grabPageController)
-  .get("/dashboard/lists", middleware.checkUserCredentials, dashboardController.listsPageController)
+  .get("/dashboard/lists", dashboardController.listsPageController)
   .get("/dashboard/account", middleware.checkUserCredentials, dashboardController.accountPageController)
   .get("/dashboard/settings", middleware.checkUserCredentials, dashboardController.settingPageController);
 

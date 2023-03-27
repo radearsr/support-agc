@@ -41,17 +41,34 @@ const grabPageController = async (req, res) => {
   });
 };
 
-const listsPageController = (req, res) => {
-  const {
-    fullname,
-    role,
-  } = req.session;
-  res.render("pages/lists", {
-    title: "Lists - Dashboard Support AGC",
-    fullName: fullname,
-    roleName: role,
-    activePage: "Lists",
-  });
+const listsPageController = async (req, res) => {
+  try {
+    const {
+      fullname,
+      role,
+    } = req.session;
+    const resultLists = await intMysqlServices.getDataAllListsManga();
+    res.render("pages/lists", {
+      title: "Lists - Dashboard Support AGC",
+      fullName: fullname,
+      roleName: role,
+      activePage: "Lists",
+      lists: resultLists,
+    });
+  } catch (error) {
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      return res.json({
+        status: "fail",
+        message: error.message,
+      });
+    }
+    res.statusCode = 500;
+    return res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  }
 };
 
 const settingPageController = (req, res) => {
@@ -133,11 +150,12 @@ const postGrebMangaWithChar = async (req, res) => {
 const postAddNewManga = async (req, res) => {
   try {
     const payload = req.body;
-    const addedManga = intMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
+    const addedMangaId = await intMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
+    res.statusCode = 201;
     res.json({
       status: "success",
-      message: "Berhasil menambahkan lists manga baru",
-    })
+      message: `Berhasil menambahkan lists manga baru dengan ID ${addedMangaId}`,
+    });
   } catch (error) {
     console.error(error);
     res.statusCode = 500;

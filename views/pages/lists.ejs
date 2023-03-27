@@ -116,7 +116,24 @@
         <section class="section">
           <div class="card">
             <div class="card-body">
-              <table class="table table-striped" id="table1">
+              <button class="btn btn-orange">
+                Tambah Data
+              </button>
+              <div class="row justify-space-between">
+                <div class="col-md-1 col-12">
+                  <div class="form-group">
+                    <label for="first-name-column">Data Ditampilkan</label>
+                    <input type="text" id="first-name-column" class="form-control" placeholder="First Name" name="fname-column">
+                  </div>
+                </div>
+                <div class="col-md-4 col-12">
+                  <div class="form-group">
+                    <label for="first-name-column">Cari</label>
+                    <input type="text" id="first-name-column" class="form-control" placeholder="First Name" name="fname-column">
+                  </div>
+                </div>
+              </div>
+              <table class="table table-striped mt-2" id="table1">
                 <thead>
                   <tr>
                     <th>Judul</th>
@@ -126,80 +143,110 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>
-                      <select name="viewmenu" class="form-select status-episode-publish">
-                        <option value="1" selected="">Active</option>
-                        <option value="0">Non Active</option>
-                      </select>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning mb-1">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button class="btn btn-sm btn-danger mb-1">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>
-                      <select name="viewmenu" class="form-select status-episode-publish">
-                        <option value="1" selected="">Active</option>
-                        <option value="0">Non Active</option>
-                      </select>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning mb-1">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button class="btn btn-sm btn-danger mb-1">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>
-                      <select name="viewmenu" class="form-select status-episode-publish">
-                        <option value="1" selected="">Active</option>
-                        <option value="0">Non Active</option>
-                      </select>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning mb-1">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button class="btn btn-sm btn-danger mb-1">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>
-                      <select name="viewmenu" class="form-select status-episode-publish">
-                        <option value="1" selected="">Active</option>
-                        <option value="0">Non Active</option>
-                      </select>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning mb-1">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button class="btn btn-sm btn-danger mb-1">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
+                  <% for( let i = 0; i < lists.length; i++ ) { %>
+                    <tr>
+                      <td><%= lists[i].title %></td>
+                      <td><a href="<%= lists[i].link %>" target="_blank" ><%= lists[i].link %></a></td>
+                      <td>
+                        <select name="status" class="form-select">
+                          <option value="1" <%= lists[i].status === "1" ? "selected" : "" %>>Active</option>
+                          <option value="0" <%= lists[i].status === "0" ? "selected" : "" %>>Non Active</option>
+                        </select>
+                      </td>
+                      <td class="text-center">
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-warning mb-1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalEdit"
+                          data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>"
+                        >
+                          <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button
+                         type="button"
+                         class="btn btn-sm btn-danger mb-1"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalDelete"
+                         data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  <% } %>
                 </tbody>
               </table>
+            </div>
+            <div class="modal fade text-left" id="modalEdit" tabindex="-1" style="display: none;" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                  <form action="#">
+                    <div class="modal-body">
+                      <label for="title-manga">Judul: </label>
+                      <div class="form-group">
+                        <input type="text" name="title" id="title-manga" placeholder="Lorem Ipsum" class="form-control">
+                      </div>
+                      <label for="link-manga">Link: </label>
+                      <div class="form-group">
+                        <input type="url" id="link-manga" name="link" placeholder="https://loremipsum.com" class="form-control">
+                      </div>
+                      <label for="status-manga">Status: </label>
+                      <div class="form-group">
+                        <select name="status" id="status-manga" class="form-select">
+                          <option value="1">Active</option>
+                          <option value="0">Non Active</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal-footer d- justify-content-center">
+                      <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Tutup</span>
+                      </button>
+                      <button type="button" class="btn btn-orange ml-1" data-bs-dismiss="modal">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Simpan</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade text-left" id="modalDelete" tabindex="-1" style="display: none;" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">
+                      Peringatan!
+                    </h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                  <form action="#">
+                    <div class="modal-body">
+                      <p class="fs-5 text-center"></p>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                      <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Tutup</span>
+                      </button>
+                      <button type="button" class="btn btn-orange ml-1" data-bs-dismiss="modal">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Iya, Hapus</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -215,6 +262,7 @@
   </div>
   <script src="/assets/js/bootstrap.js"></script>
   <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/pages/listsPage.js"></script>
 </body>
 
 </html>
