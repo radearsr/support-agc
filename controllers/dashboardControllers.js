@@ -1,6 +1,6 @@
 const intMysqlServices = require("../services/internalMysqlServices");
 const securityServices = require("../services/securityServices");
-
+const grabbingServices = require("../services/getterMangaServices");
 const ClientError = require("../exceptions/ClientError");
 
 const currentPageStatus = {
@@ -31,10 +31,7 @@ const grabPageController = async (req, res) => {
     fullname,
     role,
   } = req.session;
-
   const genres = await intMysqlServices.getDataAllGenres();
-  console.log(genres);
-  console.log(genres[0].id);
   res.render("pages/grab", {
     title: "Grab - Dashboard Support AGC",
     fullName: fullname,
@@ -115,6 +112,42 @@ const postAccountController = async (req, res) => {
   }
 };
 
+const postGrebMangaWithChar = async (req, res) => {
+  try {
+    const { linkTarget, firstChar, maxData } = req.body;
+    const results = await grabbingServices.getMangaWithSplitChar(linkTarget, firstChar, maxData);
+    res.json({
+      status: "success",
+      data: results,
+    });
+  } catch (error) {
+    console.error(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  }
+};
+
+const postAddNewManga = async (req, res) => {
+  try {
+    const payload = req.body;
+    const addedManga = intMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
+    res.json({
+      status: "success",
+      message: "Berhasil menambahkan lists manga baru",
+    })
+  } catch (error) {
+    console.error(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  }
+}
+
 module.exports = {
   homePageController,
   grabPageController,
@@ -122,4 +155,6 @@ module.exports = {
   settingPageController,
   accountPageController,
   postAccountController,
+  postGrebMangaWithChar,
+  postAddNewManga,
 };

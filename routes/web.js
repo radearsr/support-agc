@@ -20,6 +20,8 @@ router
 router
   .post("/register", usersController.postRegisterController)
   .post("/login", usersController.postLoginController)
-  .post("/dashboard/account", dashboardController.postAccountController);
+  .post("/dashboard/account", dashboardController.postAccountController)
+  .post("/manga/bychar", dashboardController.postGrebMangaWithChar)
+  .post("/manga/add", dashboardController.postAddNewManga);
 
 module.exports = router;

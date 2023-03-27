@@ -100,4 +100,13 @@ exports.getDataAllGenres = async () => {
   return results;
 };
 
+exports.insertManga = async (values) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "INSERT INTO lists (title, link, status) VALUES ?";
+  const sqlEscapeVal = [values];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const insertedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal menambahakan manga baru");
+  return insertedManga.insertId;
+};
 

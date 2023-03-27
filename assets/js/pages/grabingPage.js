@@ -1,10 +1,55 @@
 const tipeGrabbing = document.querySelector("#tipe-grabing");
 const moreOptions = document.querySelectorAll(".more-option");
 const title = document.querySelector(".title-more-option");
-const findGrabButton = document.querySelector("#find-grab");
 const formFinder = document.querySelector("#form-finder");
 const selectUrlGrabbing = document.querySelector("#url-grabing");
-let currentMoreOption;
+const loadingElement = document.querySelector(".bg-loading");
+
+const createTableData = (results) => {
+  const tbody = document.querySelector("#bodyTable");
+  const mappedResult = results.map((result) => {
+    const tableDataText = `
+      <tr>
+        <td>
+          <input type="checkbox" class="form-check-input form-check-primary" checked="" name="customCheck" id="customColorCheck1">
+        </td>
+        <td>${result.title}</td>
+        <td>${result.link}</td>
+        <td>
+          <select name="viewmenu" class="form-select status-episode-publish">
+            <option value="1" selected>Active</option>
+            <option value="0">Non Active</option>
+          </select>
+        </td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-orange mb-1">
+            INSERT
+          </button>
+        </td>
+      </tr>
+    `;
+    return tableDataText;
+  })
+  tbody.innerHTML = mappedResult.join("");
+}
+
+const getDataManga = async (payload) => {
+  try {
+    const response = await fetch("/manga/bychar",
+    {
+      method: "POST",
+      headers: {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
 
 tipeGrabbing.addEventListener("change", (event) => {
   if (event.target.value === "Pilih") {
@@ -21,14 +66,17 @@ tipeGrabbing.addEventListener("change", (event) => {
   });
 });
 
-formFinder.addEventListener("submit", (event) => {
+formFinder.addEventListener("submit", async (event) => {
   event.preventDefault();
   const sourceGrabName = selectUrlGrabbing.getAttribute("name");
   const sourceGrabLabel = selectUrlGrabbing.parentElement.querySelector("label");
   const sourceGrabSpan = selectUrlGrabbing.parentElement.querySelector("span");
 
+  // Declare Variable For Search Manga
   const payload = {};
+  let minData;
 
+  // Validation Link Source
   if (selectUrlGrabbing.value === "Pilih") {
     sourceGrabLabel.classList.add("text-danger");
     sourceGrabSpan.classList.remove("d-none");
@@ -42,8 +90,10 @@ formFinder.addEventListener("submit", (event) => {
     payload[sourceGrabName] = selectUrlGrabbing.value;
   }
 
+  // Validation Select More Option
   moreOptions.forEach((moreOption) => {
     if (!moreOption.classList.contains("d-none")) {
+      minData = moreOption.querySelector("button").getAttribute("name") === "button-all" ? 3 : 5;
       const selected = moreOption.querySelectorAll("select");
       selected.forEach((selects) => {
         const name = selects.getAttribute("name");
@@ -64,6 +114,13 @@ formFinder.addEventListener("submit", (event) => {
       });
     }
   });
-
-  console.log(payload);
+  if (Object.keys(payload).length >= minData) {
+    loadingElement.classList.remove("d-none");
+    const listsManga = await getDataManga(payload);
+    console.log(listsManga);
+    if (listsManga.status === "success") {
+      createTableData(listsManga.data);
+      loadingElement.classList.add("d-none");
+    }
+  } 
 });

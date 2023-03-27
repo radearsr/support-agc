@@ -6,10 +6,25 @@ const getMangaWithSplitChar = async (endpoint, character, maxData) => {
   const { data } = await axios.get(`${endpoint}/manga/list-mode`);
   const $ = cheerio.load(data);
   const resultLists = [];
+
+  if (character === "all") {
+    $(".series").each((idx, el) => {
+      const title = $(el).text();
+      const link = $(el).attr("href");
+      if (resultLists.length < maxData) {
+        resultLists.push({
+          title,
+          link,
+        });
+      }
+    });
+    return resultLists;
+  }
+
   $(".series").each((idx, el) => {
     const title = $(el).text();
     const link = $(el).attr("href");
-    if ((title.charAt(0) === character) && (resultLists.length <= maxData)) {
+    if ((title.charAt(0) === character) && (resultLists.length < maxData)) {
       resultLists.push({
         title,
         link,

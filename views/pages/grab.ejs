@@ -120,9 +120,19 @@
           </div>
         </div>
         <section>
+          <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast fade hide" role="alert" data-bs-delay="1000" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  Hello, world! This is a toast message.
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+            </div>
+          </div>
           <div class="row match-height">
             <div class="col-12">
-              <div class="card">
+              <div class="card position-relative">
                 <div class="card-content">
                   <div class="card-body">
                     <form class="form" id="form-finder">
@@ -133,7 +143,7 @@
                             <label for="url-grabing">Link Sumber Grab</label>
                             <select id="url-grabing" name="linkTarget" class="form-select">
                               <option selected disabled>Pilih</option>
-                              <option value="https://kiryu.id">
+                              <option value="https://kiryuu.id">
                                 https://kiryuu.id
                               </option>
                             </select>
@@ -160,7 +170,7 @@
                               <option>Pilih</option>
                               <option value="all">A - Z</option>
                               <% for(let i = 65; i <= 90; i++) { %>
-                                <option value="<%= String.fromCharCode(i).toLowerCase() %>"><%= String.fromCharCode(i) %></option>
+                              <option value="<%= String.fromCharCode(i) %>"><%= String.fromCharCode(i) %></option>
                               <% } %>
                             </select>
                             <span class="d-none">*Contain first character is required</span>
@@ -182,7 +192,7 @@
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
-                          <button type="submit" class="btn btn-primary me-1 mb-1 find-grab">
+                          <button type="submit" name="button-all" class="btn btn-orange me-1 mb-1 find-grab">
                             Cari
                           </button>
                           <button type="reset" class="btn btn-light-secondary me-1 mb-1">
@@ -191,58 +201,61 @@
                         </div>
                       </div>
                       <div class="row more-option unit d-none">
-                        <div class="col-12">
-                          <div class="form-group">
-                            <label for="genre-anime">Genres</label>
-                            <select class="choices form-select" id="genre-anime" multiple="multiple">
-                              <% for(let i = 0; i < genres.length; i++) { %>
-                                <option value="<%= genres[i].id_genre %>"><%= genres[i].name %></option>
-                              <% } %>
-                            </select>
-                          </div>
-                        </div>
                         <div class="col-md-4 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Status</label>
-                            <select id="tipe-schedule" class="form-select">
+                            <label for="status">Status</label>
+                            <select id="status" class="form-select" name="status">
                               <option selected>Pilih</option>
-                              <option value="all">All</option>
+                              <option value="all" selected>All</option>
                               <option value="ongoing">Ongoing</option>
                               <option value="completed">Completed</option>
                               <option value="hiatus">Hiatus</option>
                             </select>
+                            <span class="d-none">*Status is required</span>
                           </div>
                         </div>
                         <div class="col-md-4 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Type</label>
-                            <select id="tipe-schedule" class="form-select">
-                              <option selected>Pilih</option>
-                              <option value="all">All</option>
+                            <label for="type-series">Type</label>
+                            <select id="type-series" class="form-select" name="type">
+                              <option value="all" selected>All</option>
                               <option value="manga">Manga</option>
                               <option value="manhwa">Manhwa</option>
                               <option value="manhua">Manhua</option>
                               <option value="comic">Comic</option>
                               <option value="novel">Novel</option>
                             </select>
+                            <span class="d-none">*Type is required</span>
                           </div>
                         </div>
                         <div class="col-md-4 col-12">
                           <div class="form-group">
-                            <label for="url-agc">Order By</label>
-                            <select id="tipe-schedule" class="form-select">
-                              <option selected>Pilih</option>
-                              <option value="default">Default</option>
+                            <label for="order-by">Order By</label>
+                            <select id="order-by" class="form-select" name="orderBy">
+                              <option value="default" selected>Default</option>
                               <option value="title">A-Z</option>
                               <option value="titlereverse">Z-A</option>
                               <option value="update">Update</option>
                               <option value="latest">Added</option>
                               <option value="popular">Populer</option>
                             </select>
+                            <span class="d-none">*Order by is required</span>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label for="genre-anime">Genres</label>
+                            <select class="choices form-select" id="genre-anime" multiple="multiple">
+                              <option value="all" selected>All</option>
+                              <% for(let i = 0; i < genres.length; i++) { %>
+                              <option value="<%= genres[i].id_genre %>"><%= genres[i].name %></option>
+                              <% } %>
+                            </select>
+                            <span class="d-none">*Genres is required</span>
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
-                          <button type="submit" class="btn btn-primary me-1 mb-1 find-grab">
+                          <button type="submit" name="button-once" class="btn btn-orange me-1 mb-1 find-grab">
                             Cari!
                           </button>
                           <button type="reset" class="btn btn-light-secondary me-1 mb-1">
@@ -253,6 +266,12 @@
                     </form>
                   </div>
                 </div>
+                <div class="bg-loading position-absolute top-0 bottom-0 start-0 end-0 rounded d-none">
+                  <div class="lds-ripple">
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -260,6 +279,7 @@
         <section class="section">
           <div class="card">
             <div class="card-body">
+              <h4 class="card-title">Hasil Penelusuran</h4>
               <table class="table table-striped" id="table1">
                 <thead>
                   <tr>
@@ -270,25 +290,8 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <input type="checkbox" class="form-check-input form-check-primary" checked="" name="customCheck" id="customColorCheck1">
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur</td>
-                    <td>
-                      <select name="viewmenu" class="form-select status-episode-publish">
-                        <option value="1" selected="">Active</option>
-                        <option value="0">Non Active</option>
-                      </select>
-                    </td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning mb-1">
-                        INSERT
-                      </button>
-                    </td>
-                  </tr>
+                <tbody id="bodyTable">
+
                 </tbody>
               </table>
             </div>
@@ -308,7 +311,8 @@
   <script src="/assets/js/app.js"></script>
   <script src="/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
   <script src="/assets/js/pages/form-element-select.js"></script>
-  <script src="/assets/js/pages/grabingPage.js"></script>
+  <script src="https://zuramai.github.io/mazer/demo/assets/js/pages/component-toasts.js"></script>
+  <script type="module" src="/assets/js/pages/grabingPage.js"></script>
 </body>
 
 </html>
