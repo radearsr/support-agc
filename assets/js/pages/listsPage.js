@@ -1,6 +1,7 @@
 const modalEdit = document.querySelector("#modalEdit");
 const modelDelete = document.querySelector("#modalDelete");
 
+
 modalEdit.addEventListener("show.bs.modal", (event) => {
   const button = event.relatedTarget;
   const fields = button.getAttribute("data-bs-field");

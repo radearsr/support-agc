@@ -124,25 +124,25 @@
               <div class="card">
                 <div class="card-content">
                   <div class="card-body">
-                    <form class="form">
+                    <form class="form" id="formSetting">
                       <h4 class="card-title">Setting AGC</h4>
                       <div class="row">
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="url-agc">Link Halaman AGC</label>
-                            <input type="url" id="url-agc" class="form-control" placeholder="https://supportagc.com" name="urlDashboard" />
+                            <input type="url" id="url-agc" class="form-control" placeholder="https://supportagc.com" name="linkAgc" />
                           </div>
                         </div>
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="email-agc">Email</label>
-                            <input type="email" id="email-agc" class="form-control" placeholder="admin@supportagc.com" name="emailDashboard" />
+                            <input type="email" id="email-agc" class="form-control" placeholder="admin@supportagc.com" name="emailAgc" />
                           </div>
                         </div>
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="password-agc">Password</label>
-                            <input type="password" id="password-agc" class="form-control" name="passwordDashboard" placeholder="iloveyou" />
+                            <input type="password" id="password-agc" class="form-control" name="passwordAgc" placeholder="iloveyou" />
                           </div>
                         </div>
                       </div>
@@ -160,7 +160,7 @@
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="tipe-schedule">Tipe Schedule</label>
-                            <select id="tipe-schedule" class="form-select">
+                            <select id="tipe-schedule" name="tipeSchedule" class="form-select">
                               <option selected>Off</option>
                               <option value="perhari">Tiap Hari</option>
                               <option value="perjam">Tiap Jam</option>
@@ -179,10 +179,7 @@
                         <div class="col-md-6 col-12">
                           <div class="form-group action-value perhari d-none">
                             <label for="field-perhari">Aksi Tiap Pukul</label>
-                            <div class="input-group">
-                              <input type="time" class="form-control" id="field-perhari" placeholder="Username" />
-                              <div class="input-group-text">WIB</div>
-                            </div>
+                            <input type="time" class="form-control" id="field-perhari" placeholder="Username" />
                           </div>
                           <div class="form-group action-value perjam d-none">
                             <label for="field-perjam">Aksi Tiap Berapa Jam Sekali</label>
@@ -194,8 +191,8 @@
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">
-                          <button type="submit" class="btn btn-primary me-1 mb-1">
-                            Submit
+                          <button type="submit" class="btn btn-orange me-1 mb-1">
+                            Simpan
                           </button>
                           <button type="reset" class="btn btn-light-secondary me-1 mb-1">
                             Reset
@@ -221,22 +218,7 @@
   </div>
   <script src="/assets/js/bootstrap.js"></script>
   <script src="/assets/js/app.js"></script>
-  <script>
-    const selectedTipeSchedule = document.querySelector("#tipe-schedule");
-    const fieldsActionValue = document.querySelectorAll(".action-value");
-    selectedTipeSchedule.addEventListener("change", (event) => {
-      fieldsActionValue.forEach((field) => {
-        if (field.classList.contains(event.target.value)) {
-          field.lastElementChild.setAttribute("name", "testing");
-          field.classList.remove("d-none");
-        } else if (field.classList.contains("d-none")) {
-          return;
-        } else {
-          field.classList.add("d-none");
-        }
-      });
-    });
-  </script>
+  <script src="/assets/js/pages/settingPage.js"></script>
 </body>
 
 </html>

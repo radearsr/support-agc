@@ -120,4 +120,13 @@ exports.getDataAllListsManga = async () => {
   return results;
 };
 
+exports.saveSetting = async (payload) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "INSERT INTO settings (halaman_agc, email_agc, password_agc, id_telegram, tipe_schedule, action_count, cron_pattern) VALUES ?";
+  const sqlEscapeVal = [[[payload.linkAgc, payload.emailAgc, payload.passwordAgc, payload.idTelegram, payload.tipeSchedule, payload.actionCount, payload.cronPattern]]];
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (results.affectedRows < 1) throw new InvariantError("Gagal menyimpan data");
+  return results.insertId;
+};
+
 

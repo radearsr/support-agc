@@ -42,11 +42,11 @@ const grabPageController = async (req, res) => {
 };
 
 const listsPageController = async (req, res) => {
+  const {
+    fullname,
+    role,
+  } = req.session;
   try {
-    const {
-      fullname,
-      role,
-    } = req.session;
     const resultLists = await intMysqlServices.getDataAllListsManga();
     res.render("pages/lists", {
       title: "Lists - Dashboard Support AGC",
@@ -57,10 +57,15 @@ const listsPageController = async (req, res) => {
     });
   } catch (error) {
     if (error instanceof ClientError) {
+      console.log("TEst")
       res.statusCode = error.statusCode;
-      return res.json({
-        status: "fail",
-        message: error.message,
+      return res.render("pages/lists", {
+        title: "Lists - Dashboard Support AGC",
+        fullName: fullname,
+        roleName: role,
+        activePage: "Lists",
+        lists: [],
+        msg: error.message,
       });
     }
     res.statusCode = 500;
@@ -164,7 +169,21 @@ const postAddNewManga = async (req, res) => {
       message: "Terjadi kegagalan pada server kami",
     });
   }
-}
+};
+
+const postSettingController = async (req, res) => {
+  try {
+    const payload = req.body;
+    await intMysqlServices.saveSetting(payload);
+    res.json({
+      status: "success",
+      msg: "Berhasil menambahkan setting",
+    })
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 module.exports = {
   homePageController,
@@ -175,4 +194,5 @@ module.exports = {
   postAccountController,
   postGrebMangaWithChar,
   postAddNewManga,
+  postSettingController,
 };
