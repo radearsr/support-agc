@@ -2,7 +2,7 @@ require("dotenv").config();
 const mysql = require("mysql");
 const slugs = require("slugs");
 
-const PREFIXDB = "wpca";
+const PREFIXDB = process.env.PREFIX_WP;
 
 const configDB = mysql.createPool({
   host: process.env.WP_HOST,

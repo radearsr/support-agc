@@ -99,7 +99,13 @@
           </div>
         </nav>
       </header>
-      <div class="main-content">
+      <div class="main-content position-relative">
+        <div class="toast position-absolute end-0 start-50 translate-middle fade hide" role="alert" aria-live="assertive" id="toastSetting" data-bs-delay="5000" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body fs-6"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
         <div class="page-title">
           <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
@@ -124,25 +130,41 @@
               <div class="card">
                 <div class="card-content">
                   <div class="card-body">
+                    <% let halamanAgc = "" %>
+                    <% let emailAgc = "" %>
+                    <% let passwordAgc = "" %>
+                    <% let idTelegram = "" %>
+                    <% let tipeSchedule = "" %>
+                    <% let actionCount = "" %>
+                    <% let actionVal = "" %>
+                    <% for (let i = 0; i < settings.length; i++) { %>
+                      <% halamanAgc = settings[i].halaman_agc %>
+                      <% emailAgc = settings[i].email_agc %>
+                      <% passwordAgc = settings[i].password_agc %>
+                      <% idTelegram = settings[i].id_telegram %>
+                      <% tipeSchedule = settings[i].tipe_schedule.toLowerCase() %>
+                      <% actionCount = settings[i].action_count %>
+                      <% actionVal = settings[i].actionVal %>
+                    <% } %>
                     <form class="form" id="formSetting">
                       <h4 class="card-title">Setting AGC</h4>
                       <div class="row">
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="url-agc">Link Halaman AGC</label>
-                            <input type="url" id="url-agc" class="form-control" placeholder="https://supportagc.com" name="linkAgc" />
+                            <input type="url" id="url-agc" class="form-control" placeholder="https://supportagc.com" name="linkAgc" value="<%= halamanAgc %>" />
                           </div>
                         </div>
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="email-agc">Email</label>
-                            <input type="email" id="email-agc" class="form-control" placeholder="admin@supportagc.com" name="emailAgc" />
+                            <input type="email" id="email-agc" class="form-control" placeholder="admin@supportagc.com" name="emailAgc" value="<%= emailAgc %>" />
                           </div>
                         </div>
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="password-agc">Password</label>
-                            <input type="password" id="password-agc" class="form-control" name="passwordAgc" placeholder="iloveyou" />
+                            <input type="password" id="password-agc" class="form-control" name="passwordAgc" placeholder="iloveyou" value="<%= passwordAgc %>" />
                           </div>
                         </div>
                       </div>
@@ -151,7 +173,7 @@
                         <div class="col-md-6 col-12">
                           <div class="form-group">
                             <label for="first-name-column">ID Chat Telegram</label>
-                            <input type="number" class="form-control" placeholder="12341234" name="idTelegram" />
+                            <input type="number" class="form-control" placeholder="12341234" name="idTelegram" value="<%= idTelegram %>" />
                           </div>
                         </div>
                       </div>
@@ -161,10 +183,10 @@
                           <div class="form-group">
                             <label for="tipe-schedule">Tipe Schedule</label>
                             <select id="tipe-schedule" name="tipeSchedule" class="form-select">
-                              <option selected>Off</option>
-                              <option value="perhari">Tiap Hari</option>
-                              <option value="perjam">Tiap Jam</option>
-                              <option value="permenit">Tiap Menit</option>
+                              <option <%= tipeSchedule === "" ? "selected" : "" %>>Off</option>
+                              <option value="perhari" <%= tipeSchedule === "perhari" ? "selected" : "" %>>Tiap Hari</option>
+                              <option value="perjam" <%= tipeSchedule === "perjam" ? "selected" : "" %>>Tiap Jam</option>
+                              <option value="permenit" <%= tipeSchedule === "permenit" ? "selected" : "" %>>Tiap Menit</option>
                             </select>
                           </div>
                         </div>
@@ -172,22 +194,22 @@
                           <div class="form-group">
                             <label for="action-count">Tiap Aksi Akan Publish Berapa Data</label>
                             <div class="input-group">
-                              <input type="number" class="form-control" id="action-count" placeholder="1" name="actionCount" />
+                              <input type="number" class="form-control" id="action-count" placeholder="1" name="actionCount" value="<%= actionCount %>" />
                             </div>
                           </div>
                         </div>
                         <div class="col-md-6 col-12">
                           <div class="form-group action-value perhari d-none">
                             <label for="field-perhari">Aksi Tiap Pukul</label>
-                            <input type="time" class="form-control" id="field-perhari" placeholder="Username" />
+                            <input type="time" class="form-control" id="field-perhari" placeholder="Username" value="<%= tipeSchedule === "perhari" ? actionVal : "" %>" />
                           </div>
                           <div class="form-group action-value perjam d-none">
                             <label for="field-perjam">Aksi Tiap Berapa Jam Sekali</label>
-                            <input type="number" id="field-perjam" class="form-control" placeholder="1" />
+                            <input type="number" id="field-perjam" class="form-control" placeholder="1" value="<%= tipeSchedule === "perjam" ? actionVal : "" %>" />
                           </div>
                           <div class="form-group action-value permenit d-none">
                             <label for="field-permenit">Aksi Tiap Berapa Menit Sekali</label>
-                            <input type="number" class="form-control" placeholder="10" id="field-permenit" />
+                            <input type="number" class="form-control" placeholder="10" id="field-permenit" <%= tipeSchedule === "permenit" ? actionVal : "" %> />
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">

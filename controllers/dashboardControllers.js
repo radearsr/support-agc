@@ -1,4 +1,4 @@
-const intMysqlServices = require("../services/internalMysqlServices");
+const localMysqlServices = require("../services/local/localMysqlServices");
 const securityServices = require("../services/securityServices");
 const grabbingServices = require("../services/getterMangaServices");
 const ClientError = require("../exceptions/ClientError");
@@ -31,7 +31,7 @@ const grabPageController = async (req, res) => {
     fullname,
     role,
   } = req.session;
-  const genres = await intMysqlServices.getDataAllGenres();
+  const genres = await localMysqlServices.getDataAllGenres();
   res.render("pages/grab", {
     title: "Grab - Dashboard Support AGC",
     fullName: fullname,
@@ -47,7 +47,7 @@ const listsPageController = async (req, res) => {
     role,
   } = req.session;
   try {
-    const resultLists = await intMysqlServices.getDataAllListsManga();
+    const resultLists = await localMysqlServices.getDataAllListsManga();
     res.render("pages/lists", {
       title: "Lists - Dashboard Support AGC",
       fullName: fullname,
@@ -76,24 +76,37 @@ const listsPageController = async (req, res) => {
   }
 };
 
-const settingPageController = (req, res) => {
+const settingPageController = async (req, res) => {
   const {
+    userId,
     fullname,
     role,
   } = req.session;
-  res.render("pages/setting", {
-    title: "Setting - Dashboard Support AGC",
-    fullName: fullname,
-    roleName: role,
-    activePage: "Setting",
-  });
+  try {
+    const result = await localMysqlServices.getSettingWithUserId(userId);
+    console.log(result);
+    res.render("pages/setting", {
+      title: "Setting - Dashboard Support AGC",
+      fullName: fullname,
+      roleName: role,
+      activePage: "Setting",
+      settings: result,
+    });
+  } catch (error) {
+    res.render("pages/setting", {
+      title: "Setting - Dashboard Support AGC",
+      fullName: fullname,
+      roleName: role,
+      activePage: "Setting",
+    });
+  }
 };
 
 const accountPageController = async (req, res) => {
   const {
     userId
   } = req.session;
-  const userInfo = await intMysqlServices.getUserProfileByUserId(userId);
+  const userInfo = await localMysqlServices.getUserProfileByUserId(userId);
   res.render("pages/account", {
     title: "Account - Dashboard Support AGC",
     fullName: userInfo.fullname,
@@ -114,7 +127,7 @@ const postAccountController = async (req, res) => {
     } = req.session;
     const payload = req.body;
     const hashedPassword = await securityServices.hashingPassword(payload.password);
-    await intMysqlServices.updateUserProfile(userId, {
+    await localMysqlServices.updateUserProfile(userId, {
       ...payload,
       password: hashedPassword,
     });
@@ -155,7 +168,7 @@ const postGrebMangaWithChar = async (req, res) => {
 const postAddNewManga = async (req, res) => {
   try {
     const payload = req.body;
-    const addedMangaId = await intMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
+    const addedMangaId = await localMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
     res.statusCode = 201;
     res.json({
       status: "success",
@@ -173,14 +186,22 @@ const postAddNewManga = async (req, res) => {
 
 const postSettingController = async (req, res) => {
   try {
+    const {
+      userId,
+    } = req.session;
     const payload = req.body;
-    await intMysqlServices.saveSetting(payload);
+    console.log(payload);
+    await localMysqlServices.createOrUpdateSetting(userId, payload);
     res.json({
       status: "success",
       msg: "Berhasil menambahkan setting",
     })
   } catch (error) {
     console.log(error);
+    res.json({
+      status: "error",
+      msg: "Terjadi kegagalan pada server",
+    });
   }
 };
 

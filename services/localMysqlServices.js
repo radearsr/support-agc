@@ -120,13 +120,49 @@ exports.getDataAllListsManga = async () => {
   return results;
 };
 
-exports.saveSetting = async (payload) => {
+const insertSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "INSERT INTO settings (halaman_agc, email_agc, password_agc, id_telegram, tipe_schedule, action_count, cron_pattern) VALUES ?";
-  const sqlEscapeVal = [[[payload.linkAgc, payload.emailAgc, payload.passwordAgc, payload.idTelegram, payload.tipeSchedule, payload.actionCount, payload.cronPattern]]];
+  const sqlString = "INSERT INTO settings (halaman_agc, id_user, email_agc, password_agc, id_telegram, tipe_schedule, action_count, actionVal, cron_pattern) VALUES ?";
+  const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.idTelegram, payload.tipeSchedule, payload.actionCount, payload.actionVal, payload.cronPattern]]];
+  console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal menyimpan data");
   return results.insertId;
 };
 
+const updateSetting = async (userId, payload) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "UPDATE settings SET halaman_agc=?, email_agc=?, password_agc=?, id_telegram=?, tipe_schedule=?, action_count=?, actionVal=? cron_pattern=? WHERE id_user=?";
+  const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.idTelegram], [payload.tipeSchedule], [payload.actionCount], [payload.actionVal], [payload.cronPattern], [userId]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const updatedSetting = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (updatedSetting.affectedRows < 1) throw new InvariantError("Gagal memperbarui setting");
+};
 
+const selectSettingWithUserId = async (userId) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM settings WHERE id_user=?";
+  const sqlEscapeVal = [[userId]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const resultSetting =  await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (resultSetting.length < 1) throw new NotFoundError("Setting belum tersedia");
+};
+
+exports.getSettingWithUserId = async (userId) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM settings WHERE id_user=?";
+  const sqlEscapeVal = [[userId]]
+  console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (result.length < 1) throw new NotFoundError("Setting tidak ditemukan");
+  return result;
+};
+
+exports.createOrUpdateSetting = async (userId, payload) => {
+  try {
+    await selectSettingWithUserId(userId);
+    await updateSetting(userId, payload);
+  } catch (error) {
+    await insertSetting(userId, payload);
+  }
+};
