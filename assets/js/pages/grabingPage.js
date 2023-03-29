@@ -64,9 +64,10 @@ const insertListManga = async (targetEl) => {
       "Accept": "application/json, text/plain, */*",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ title, link, status}),
+    body: JSON.stringify({ title, link, status, createdAt: new Date(Date.now())}),
   });
   const result = await response.json();
+  console.table(result);
 };
 
 const listsResultMangaAction = () => {

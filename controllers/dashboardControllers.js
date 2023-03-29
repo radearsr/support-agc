@@ -1,4 +1,4 @@
-const localMysqlServices = require("../services/local/localMysqlServices");
+const localMysqlServices = require("../services/localMysqlServices");
 const securityServices = require("../services/securityServices");
 const grabbingServices = require("../services/getterMangaServices");
 const ClientError = require("../exceptions/ClientError");
@@ -84,7 +84,7 @@ const settingPageController = async (req, res) => {
   } = req.session;
   try {
     const result = await localMysqlServices.getSettingWithUserId(userId);
-    console.log(result);
+    // console.log(result);
     res.render("pages/setting", {
       title: "Setting - Dashboard Support AGC",
       fullName: fullname,
@@ -168,7 +168,12 @@ const postGrebMangaWithChar = async (req, res) => {
 const postAddNewManga = async (req, res) => {
   try {
     const payload = req.body;
-    const addedMangaId = await localMysqlServices.insertManga([[payload.title, payload.link, payload.status]]);
+    const addedMangaId = await localMysqlServices.insertManga([[
+      payload.title,
+      payload.link,
+      payload.status,
+      payload.createdAt
+    ]]);
     res.statusCode = 201;
     res.json({
       status: "success",

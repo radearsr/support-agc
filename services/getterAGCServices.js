@@ -103,7 +103,7 @@ const loginAndGetSessionCookie = async (headCookie, payload, endpoint) => {
 };
 
 const getDetailManga = async (headCookie, url, proxy, endpoint) => {
-  console.log({ headCookie, url, proxy, endpoint })
+  // console.log({ headCookie, url, proxy, endpoint })
   const response = await axios({
     method: "get",
     url: `${endpoint}/dashboard/manga`,
@@ -123,7 +123,7 @@ const getDetailManga = async (headCookie, url, proxy, endpoint) => {
 };
 
 const getMangaChapter = async (headCookie, url, proxy, endpoint) => {
-  console.log({ headCookie, url, proxy, endpoint })
+  // console.log({ headCookie, url, proxy, endpoint })
   const response = await axios({
     method: "get",
     url: `${endpoint}/dashboard/manga/chapter`,
@@ -215,7 +215,7 @@ const postMangaChapter = async (chapter, postId, headCookie, payloadToken) => {
 
 exports.getTokenAndGetDetailManga = async (endpoint, linkManga, email, password) => {
   try {
-    console.log({endpoint, linkManga, email, password});
+    // console.log({endpoint, linkManga, email, password});
     const cookieJson = await readCookieFromFile(path.join(__dirname, "./sessionCookies.json"));
     const { key: cookie } = JSON.parse(cookieJson);
     const response = await getDetailManga(cookie, linkManga, "", endpoint);
@@ -240,7 +240,6 @@ exports.getTokenAndGetDetailManga = async (endpoint, linkManga, email, password)
 
 exports.getTokenAndGetChapterManga = async (endpoint, linkChapter, email, password) => {
   try {
-
     const cookieJson = await readCookieFromFile(path.join(__dirname, "./sessionCookies.json"));
     const { key: cookie } = JSON.parse(cookieJson);
     const response = await getMangaChapter(cookie, linkChapter, "", endpoint);

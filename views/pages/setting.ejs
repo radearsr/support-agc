@@ -138,13 +138,13 @@
                     <% let actionCount = "" %>
                     <% let actionVal = "" %>
                     <% for (let i = 0; i < settings.length; i++) { %>
-                      <% halamanAgc = settings[i].halaman_agc %>
-                      <% emailAgc = settings[i].email_agc %>
-                      <% passwordAgc = settings[i].password_agc %>
-                      <% idTelegram = settings[i].id_telegram %>
-                      <% tipeSchedule = settings[i].tipe_schedule.toLowerCase() %>
-                      <% actionCount = settings[i].action_count %>
-                      <% actionVal = settings[i].actionVal %>
+                    <% halamanAgc = settings[i].linkAgc %>
+                    <% emailAgc = settings[i].emailAgc %>
+                    <% passwordAgc = settings[i].passwordAgc %>
+                    <% idTelegram = settings[i].telegramId %>
+                    <% tipeSchedule = settings[i].tipeSchedule.toLowerCase() %>
+                    <% actionCount = settings[i].actionCount %>
+                    <% actionVal = settings[i].actionVal %>
                     <% } %>
                     <form class="form" id="formSetting">
                       <h4 class="card-title">Setting AGC</h4>
@@ -209,7 +209,7 @@
                           </div>
                           <div class="form-group action-value permenit d-none">
                             <label for="field-permenit">Aksi Tiap Berapa Menit Sekali</label>
-                            <input type="number" class="form-control" placeholder="10" id="field-permenit" <%= tipeSchedule === "permenit" ? actionVal : "" %> />
+                            <input type="number" class="form-control" placeholder="10" id="field-permenit" value="<%= tipeSchedule === "permenit" ? actionVal : "" %>" />
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">

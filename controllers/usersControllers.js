@@ -1,5 +1,5 @@
 const ClientError = require("../exceptions/ClientError");
-const intMysqlServices = require("../services/internalMysqlServices");
+const localMysqlServices = require("../services/localMysqlServices");
 const securityServices = require("../services/securityServices");
 
 const currentPageStatus = {
@@ -30,9 +30,9 @@ const registerPageController = (req, res) => {
 const postRegisterController = async (req, res) => {
   try {
     const payload = req.body;
-    await intMysqlServices.checkAvailableEmail(payload.email);
+    await localMysqlServices.checkAvailableEmail(payload.email);
     const hashedPassword = await securityServices.hashingPassword(payload.password);
-    const createdNewUser = await intMysqlServices.createNewUser({
+    const createdNewUser = await localMysqlServices.createNewUser({
       ...payload,
       password: hashedPassword,
     });
@@ -55,7 +55,7 @@ const postRegisterController = async (req, res) => {
 const postLoginController = async (req, res) => {
   try {
     const payload = req.body;
-    const userCredential = await intMysqlServices.getUserWhereEmail(payload.email);
+    const userCredential = await localMysqlServices.getUserWhereEmail(payload.email);
     await securityServices.comparePassword(payload.password, userCredential.password);
     currentPageStatus.code = 200;
     currentPageStatus.msg = "Berhasil login";
