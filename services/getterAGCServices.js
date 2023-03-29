@@ -1,7 +1,35 @@
 const axios = require("axios");
 const FormData = require("form-data");
+const fs = require("fs");
+const path = require("path");
 
-const BASE_URL = "https://agc.manhwaa.my.id";
+
+const readCookieFromFile = (pathToFile) => (
+  new Promise((resolve, reject) => {
+    fs.readFile(pathToFile, "utf8", (err, jsonStr) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(jsonStr);
+    })
+  })
+);
+
+const writeCookieToFile = (key, token="") => {
+  const values = {
+    key,
+    token
+  };
+  const jsonString = JSON.stringify(values)
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path.join(__dirname, "./sessionCookies.json"), jsonString, err => {
+      if (err) {
+        reject("Error writing file", err);
+      }
+      resolve("success");
+    })
+  });
+};
 
 const getSessionAndTokenForLogin = async (endpoint) => {
   const response = await axios({
@@ -75,6 +103,7 @@ const loginAndGetSessionCookie = async (headCookie, payload, endpoint) => {
 };
 
 const getDetailManga = async (headCookie, url, proxy, endpoint) => {
+  console.log({ headCookie, url, proxy, endpoint })
   const response = await axios({
     method: "get",
     url: `${endpoint}/dashboard/manga`,
@@ -94,6 +123,7 @@ const getDetailManga = async (headCookie, url, proxy, endpoint) => {
 };
 
 const getMangaChapter = async (headCookie, url, proxy, endpoint) => {
+  console.log({ headCookie, url, proxy, endpoint })
   const response = await axios({
     method: "get",
     url: `${endpoint}/dashboard/manga/chapter`,
@@ -183,13 +213,51 @@ const postMangaChapter = async (chapter, postId, headCookie, payloadToken) => {
   return response.data.data;
 };
 
+exports.getTokenAndGetDetailManga = async (endpoint, linkManga, email, password) => {
+  try {
+    console.log({endpoint, linkManga, email, password});
+    const cookieJson = await readCookieFromFile(path.join(__dirname, "./sessionCookies.json"));
+    const { key: cookie } = JSON.parse(cookieJson);
+    const response = await getDetailManga(cookie, linkManga, "", endpoint);
+    return response.result;
+  } catch (error) {
+    // console.error(error);
+    if (error.response.status === 401 && error.response.data.message === "Unauthenticated.") {
+      const { cookie: key, csrf } = await getSessionAndTokenForLogin(endpoint);
+      const cookie = await loginAndGetSessionCookie(key, {
+        token: csrf,
+        email,
+        password,
+      }, endpoint);
+      console.log(cookie);
+      await writeCookieToFile(cookie);
+      const response = await getDetailManga(cookie, linkManga, "", endpoint);
+      return response.result;
+    }
+    // console.error(error);
+  }
+};
 
-module.exports = {
-  getSessionAndTokenForLogin,
-  getSessionAndToken,
-  loginAndGetSessionCookie,
-  getDetailManga,
-  getMangaChapter,
-  postDetailsManga,
-  postMangaChapter,
-}
+exports.getTokenAndGetChapterManga = async (endpoint, linkChapter, email, password) => {
+  try {
+
+    const cookieJson = await readCookieFromFile(path.join(__dirname, "./sessionCookies.json"));
+    const { key: cookie } = JSON.parse(cookieJson);
+    const response = await getMangaChapter(cookie, linkChapter, "", endpoint);
+    return response.result;
+  } catch (error) {
+    // console.error(error.response);
+    if (error.response.status === 401 && error.response.data.message === "Unauthenticated.") {
+      const { cookie: key, csrf } = await getSessionAndTokenForLogin();
+      const cookie = await loginAndGetSessionCookie(key, {
+        token: csrf,
+        email,
+        password,
+      }, endpoint);
+      await writeCookieToFile(cookie);
+      const response = await getMangaChapter(cookie, urlChapter, "", endpoint);
+      return response.result;
+    }
+    // console.error(error);
+  }  
+};
