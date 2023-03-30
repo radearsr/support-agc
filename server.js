@@ -37,7 +37,6 @@ setInterval(async () => {
   try {
     console.log(currentPattern);
     const settings = await localMysqlServices.getSettingWithoutUserId();
-    const listsManga = await localMysqlServices.getDataAllListsMangaASC(settings.actionCount);
     console.log("CRON PATTERN", settings.cronPattern);
     console.log(settings.cronPattern !== currentPattern);
     if (settings.cronPattern !== currentPattern) {
@@ -45,6 +44,7 @@ setInterval(async () => {
       currentPattern = settings.cronPattern;
       job.stop();
       job = Cron(settings.cronPattern, async () => {
+        const listsManga = await localMysqlServices.getDataAllListsMangaASC(settings.actionCount);
         await cronServices.cronActionPublish(settings.linkAgc, listsManga, settings.emailAgc, settings.passwordAgc, settings.linkWp);
       });
     }
