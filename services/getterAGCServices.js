@@ -3,7 +3,6 @@ const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
 
-
 const readCookieFromFile = (pathToFile) => (
   new Promise((resolve, reject) => {
     fs.readFile(pathToFile, "utf8", (err, jsonStr) => {
@@ -57,10 +56,10 @@ const getSessionAndTokenForLogin = async (endpoint) => {
   };
 };
 
-const getSessionAndToken = async (headCookie, linkpath) => {
+const getSessionAndToken = async (headCookie, endpoint) => {
   const response = await axios({
     method: "get",
-    url: `${BASE_URL}/${linkpath}`,
+    url: `${endpoint}/dashboard`,
     headers: {
       "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
       "cookie": `${headCookie}`,
@@ -69,14 +68,12 @@ const getSessionAndToken = async (headCookie, linkpath) => {
   // CSRF TOKEN
   const htmlHead = response.data.split("<title>")[0];
   const contentCSRF = htmlHead.split("content");
-  console.log(contentCSRF[5]);
+  // console.log(contentCSRF[5]);
   const content = contentCSRF[5];
   const csrfSplited = content.split("\"");
-  console.log(csrfSplited);
+  // console.log(csrfSplited);
   const csrf = csrfSplited[1];
-  return {
-    csrf
-  };
+  return csrf;
 };
 
 const loginAndGetSessionCookie = async (headCookie, payload, endpoint) => {
@@ -142,9 +139,9 @@ const getMangaChapter = async (headCookie, url, proxy, endpoint) => {
   };
 };
 
-const postDetailsManga = async (details, headCookie, payloadToken) => {
+const postDetailsManga = async (headCookie, payloadToken, details, endpoint) => {
   const bodyFormData = new FormData();
-  console.log(headCookie, payloadToken);
+  // console.log(headCookie, payloadToken);
   bodyFormData.append("_token", payloadToken);
   bodyFormData.append("title", details.title);
   bodyFormData.append("desc", details.description);
@@ -164,7 +161,7 @@ const postDetailsManga = async (details, headCookie, payloadToken) => {
 
   const response = await axios({
     method: "post",
-    url: `${BASE_URL}/dashboard/manga/publish`,
+    url: `${endpoint}/dashboard/manga/publish`,
     data: bodyFormData,
     headers: { 
       "Content-Type": "multipart/form-data",
@@ -213,6 +210,31 @@ const postMangaChapter = async (chapter, postId, headCookie, payloadToken) => {
   return response.data.data;
 };
 
+exports.postMangaPublish = async (endpoint, email, password, payload) => {
+  try {
+    // console.log({endpoint, email, password, payload});
+    const cookieJson = await readCookieFromFile(path.join(__dirname, "./sessionCookies.json"));
+    const { key: cookie, token: csrf } = JSON.parse(cookieJson);
+    const responsePublish = await postDetailsManga(cookie, csrf, payload, endpoint);
+    // console.log(responsePublish);
+    return responsePublish;
+  } catch (error) {
+    console.error(error);
+    if (error.response.status === 401 && error.response.data.message === "Unauthenticated.") {
+      const { cookie: key, csrf } = await getSessionAndTokenForLogin(endpoint);
+      const cookie = await loginAndGetSessionCookie(key, {
+        token: csrf,
+        email,
+        password,
+      }, endpoint);
+      const csrfForPublish = await getSessionAndToken(cookie, endpoint);
+      await writeCookieToFile(cookie, csrfForPublish);
+      const responsePublish = await postDetailsManga(cookie, csrfForPublish, payload, endpoint);
+      return responsePublish;
+    }
+  }
+};
+
 exports.getTokenAndGetDetailManga = async (endpoint, linkManga, email, password) => {
   try {
     // console.log({endpoint, linkManga, email, password});
@@ -230,7 +252,8 @@ exports.getTokenAndGetDetailManga = async (endpoint, linkManga, email, password)
         password,
       }, endpoint);
       console.log(cookie);
-      await writeCookieToFile(cookie);
+      const csrfForPublish = await getSessionAndToken(cookie, endpoint);
+      await writeCookieToFile(cookie, csrfForPublish);
       const response = await getDetailManga(cookie, linkManga, "", endpoint);
       return response.result;
     }
@@ -253,7 +276,8 @@ exports.getTokenAndGetChapterManga = async (endpoint, linkChapter, email, passwo
         email,
         password,
       }, endpoint);
-      await writeCookieToFile(cookie);
+      const csrfForPublish = await getSessionAndToken(cookie, endpoint);
+      await writeCookieToFile(cookie, csrfForPublish);
       const response = await getMangaChapter(cookie, urlChapter, "", endpoint);
       return response.result;
     }

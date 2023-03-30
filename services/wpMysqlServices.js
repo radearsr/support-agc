@@ -39,7 +39,7 @@ const selectPostsByTitleManga = async (title) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_posts WHERE post_title=? AND post_author=1  ORDER BY post_modified ASC LIMIT 1`;
   const sqlEscapeVal = [title];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const checkPosts = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (checkPosts.length < 1) throw new Error("MYSQL_NOTFOUND_POST");
   return checkPosts[0].ID;
@@ -68,7 +68,7 @@ const insertPostsManga = async (data) => {
     "",
     "",
   ]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedPost.affectedRows < 1) throw new Error("MYSQL_INSERT_POST");
   return insertedPost.insertId;
@@ -96,7 +96,7 @@ const updatePostsManga = async (data, postId) => {
     [""],
     [postId]
   ];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedPost.affectedRows < 1) throw new Error("MYSQL_POST_UPDATE");
   return postId;
@@ -122,7 +122,7 @@ exports.updateGuid = async (postId, urlWordpress) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_posts SET guid=? WHERE ID=?`;
   const sqlEscapeVal = [[`${urlWordpress}/?p=${postId}`], [postId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedPostGuid = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedPostGuid.affectedRows < 1) throw new Error("MYSQL_UPDATE_GUID");
 };
@@ -132,7 +132,7 @@ exports.insertPostMeta = async (dataForInsert) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `INSERT INTO ${PREFIXDB}_postmeta (post_id, meta_key, meta_value) VALUES ?`;
   const sqlEscapeVal = [dataForInsert];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedPostMeta = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedPostMeta.affectedRows < 1) throw new Error("MYSQL_INSERT_POST_META");
   return insertedPostMeta.insertId;
@@ -145,7 +145,7 @@ const insertTerms = async (name) => {
   const sqlEscapeVal = [[
     [name, slugs(name)]
   ]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedTerms = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedTerms.affectedRows < 1) throw new Error("MYSQL_INSERT_TERMS");
   return insertedTerms.insertId;
@@ -156,7 +156,7 @@ const selectTermsByName = async (name) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_terms WHERE name=? LIMIT 1`;
   const sqlEscapeVal = [name];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("MYSQL_NOTFOUND_TERMS");
   return result[0].term_id;
@@ -181,7 +181,7 @@ const insertTaxonomy = async (termId, taxonomy) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `INSERT INTO ${PREFIXDB}_term_taxonomy (term_id, taxonomy, description) VALUES?`;
   const sqlEscapeVal = [[[termId, taxonomy, ""]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedTaxonomy = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedTaxonomy.affectedRows < 1) throw new Error("MYSQL_INSERT_TAXONOMY");
   return insertedTaxonomy.insertId;
@@ -192,7 +192,7 @@ const selectTermTaxonomyWhereTermId = async (termId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_term_taxonomy WHERE term_id=? LIMIT 1`;
   const sqlEscapeVal = [termId];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("MYSQL_NOTFOUND_TAXONOMY");
   return result[0].term_taxonomy_id;
@@ -234,7 +234,7 @@ const insertTermRelationship = async (postId, taxonomyId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `INSERT INTO ${PREFIXDB}_term_relationships (object_id, term_taxonomy_id) VALUES ?`;
   const sqlEscapeVal = [[[postId, taxonomyId]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedRelation = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedRelation.affectedRows < 1) throw new Error("MYSQL_UPDATE_COUNT_TAXONOMY");
   return taxonomyId;
@@ -245,7 +245,7 @@ const selectTermRelationship = async (postId, taxonomyId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_term_relationships WHERE object_id=? AND term_taxonomy_id=?`;
   const sqlEscapeVal = [[postId], [taxonomyId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const termRelationship = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (termRelationship.length < 1) throw new Error("MYSQL_NOTFOUND_RELATIONSHIP");
 };
@@ -255,7 +255,7 @@ const updateTermRelationship = async (postId, taxonomyId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_term_relationships SET object_id=?, term_taxonomy_id=? WHERE object_id=? AND term_taxonomy_id=?`;
   const sqlEscapeVal = [[postId], [taxonomyId], [postId], [taxonomyId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedTermRelationship = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedTermRelationship.affectedRows < 1) throw new Error("MYSQL_UPDATE _RELATIONSHIP");
 }
@@ -298,7 +298,7 @@ const insertPostImage = async (postId, data) => {
     "",
     "",
   ]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedPost.affectedRows < 1) throw new Error("MYSQL_INSERT_POST_IMAGE");
   return insertedPost.insertId;
@@ -309,7 +309,7 @@ const selectPostImage = async (postParent) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_posts WHERE post_parent=?`;
   const sqlEscapeVal = [postParent];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const postImages = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (postImages.length < 1) throw new Error("MYSQL_NOTFOUND_POST_IMAGE");
   return postImages[0].post_parent;
@@ -338,7 +338,7 @@ const updatePostImage = async (postParent, data) => {
     [""],
     [postParent],
   ];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedPostImages = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedPostImages.affectedRows < 1) throw new Error("MYSQL_UPDATE_POST_IMAGE");
   return postParent;
@@ -361,10 +361,10 @@ exports.updateOrCreatePostImage = async (postParent, data) => {
 
 // Select Table Posts By Id From Manga Init To Chapter Or General Select Posts By Id
 exports.selectPostsById = async (parentPostId) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_posts WHERE ID=?`;
   const sqlEscapeVal = [parentPostId];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const posts = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (posts.length < 1) throw new Error("MYSQL_NOTFOUND_POST_PARENT");
   return posts[0];
@@ -372,10 +372,10 @@ exports.selectPostsById = async (parentPostId) => {
 
 // Select Table Posts By Title Chapter
 const selectPostsByTitleChapter = async (postTitle) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_posts WHERE post_title=?`;
   const sqlEscapeVal = [postTitle];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const posts = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (posts.length < 1) throw new Error("MYSQL_NOTFOUND_EXITING_POST");
   return posts[0].ID;
@@ -384,7 +384,7 @@ const selectPostsByTitleChapter = async (postTitle) => {
 // Insert Table Posts Chapter
 const insertPostsChapter = async (data) => {
   const date = new Date();
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `INSERT INTO ${PREFIXDB}_posts (post_author, post_date, post_date_gmt, post_modified, post_modified_gmt, post_content, post_title, post_name, guid, post_type, post_status, post_excerpt, to_ping, pinged, post_content_filtered) VALUES ?`;
   const sqlEscapeVal = [[[
     1,
@@ -403,7 +403,7 @@ const insertPostsChapter = async (data) => {
     "",
     "",
   ]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedPost.affectedRows < 1) throw new Error("MYSQL_INSERT_POST");
   return insertedPost.insertId;
@@ -412,7 +412,7 @@ const insertPostsChapter = async (data) => {
 // Update Table Posts By Id Chapter
 const updatePostsByIdChapter = async (data, postId) => {
   const date = new Date();
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_posts SET post_author=?, post_modified=?, post_modified_gmt=?, post_content=?, post_title=?, post_name=?, guid=?, post_type=?, post_status=?, post_excerpt=?, to_ping=?, pinged=?, post_content_filtered=? WHERE ID=?`;
   const sqlEscapeVal = [
     [1],
@@ -430,7 +430,7 @@ const updatePostsByIdChapter = async (data, postId) => {
     [""],
     [postId]
   ];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedPost.affectedRows < 1) throw new Error("MYSQL_UPDATE_POST");
   return postId;
@@ -453,20 +453,20 @@ exports.updateOrCreatePostsChapter = async (data) => {
 // Update Modify Date Parent Post Chapter
 exports.updateModifyDateParentPostChapter = async (postInitId) => {
   const date = new Date();
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_posts SET post_modified=?, post_modified_gmt=? WHERE ID=?`;
   const sqlEscapeVal = [[new Date(date.getTime())], [new Date(date.getTime())], postInitId];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedParentPost = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedParentPost.affectedRows < 1) throw new Error("MYSQL_UPDATE_POST_PARENT");
 };
 
 // Select Table Posts id In PostMeta Table Where ero_seri = parent post id (Chapter)
 exports.selectPostIdInPostMetaChapter = async (parentId) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT post_id FROM ${PREFIXDB}_postmeta WHERE meta_key=? AND meta_value=?`;
   const sqlEscapeVal = [["ero_seri"], [parentId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new Error("MYSQL_NOTFOUND_POST_META_WHERE_ERO_SERI");
   const postIds = results.map((result) => result.post_id);
@@ -476,11 +476,11 @@ exports.selectPostIdInPostMetaChapter = async (parentId) => {
 
 // Select 3 Latest Chapter From Table PostMeta Id (Chapter)
 exports.selectLatestChapter = async (ids) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   console.log(ids.join(","))
   const sqlString = `SELECT * FROM ${PREFIXDB}_postmeta WHERE meta_key=? AND post_id IN ? ORDER BY meta_value DESC LIMIT 3`;
   const sqlEscapeVal = [["ero_chapter"], [ids]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const postMetas = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (postMetas.length < 1) throw new Error("MYSQL_NOTFOUND_POST_META_WHERE_ERO_CHAPTER");
   return postMetas;
@@ -488,10 +488,10 @@ exports.selectLatestChapter = async (ids) => {
 
 // Select Ero Latest From Table Post Meta Where meta_value=ero_latest (Chapter)
 const selectErolatestFromPostmetaChapter = async (parentPostId) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT * FROM ${PREFIXDB}_postmeta WHERE meta_key=? AND post_id=? LIMIT 1`;
   const sqlEscapeVal = [["ero_latest"], [parentPostId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const postMetas = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (postMetas.length < 1) throw new Error("MYSQL_NOTFOUND_POST_META_WHERE_ERO_LATEST");
   return postMetas[0].postId;
@@ -499,10 +499,10 @@ const selectErolatestFromPostmetaChapter = async (parentPostId) => {
 
 // Update Ero Latest To Table Post meta Where meta_value=ero_latest (Chapter)
 const updateEroLatestFromPostmetaChapter = async (eroLatestVal, parentPostId) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_postmeta SET meta_value=? WHERE meta_key=? AND post_id=?`;
   const sqlEscapeVal = [[eroLatestVal], ["ero_latest"], [parentPostId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedLatestPostmeta = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedLatestPostmeta.affectedRows < 1) throw new Error("MYSQL_UPDATE_POST_META_ERO_LATEST");
   return parentPostId;
@@ -510,10 +510,10 @@ const updateEroLatestFromPostmetaChapter = async (eroLatestVal, parentPostId) =>
 
 // Insert Ero Latest To Table Post Meta Chapter
 const insertEroLatestFromPostmetaChapter = async (eroLatest) => {
-  const conn = await connectToDatabase(localConf);
+  const conn = await connectToDatabase(configDB);
   const sqlString = `INSERT INTO ${PREFIXDB}_postmeta (post_id, meta_key, meta_value) VALUES ?`;
   const sqlEscapeVal = [eroLatest];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedLatestPostmeta = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedLatestPostmeta.affectedRows < 1) throw new Error("MYSQL_INSERT_POST_META_ERO_LATEST");
   return insertedLatestPostmeta.insertId;

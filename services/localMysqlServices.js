@@ -39,7 +39,7 @@ exports.checkAvailableEmail = async (email) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM users WHERE email=?";
   const sqlEscapeVal = [email];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length >= 1) throw new InvariantError("Gagal email sudah tersedia. silahkan login untuk masuk");
 };
@@ -53,7 +53,7 @@ exports.createNewUser = async (payload) => {
     payload.email,
     payload.password
   ]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const createdUser = await queryDatabase(conn, sqlString, sqlEscapeVal);
   console.log(createdUser);
   if (createdUser.affectedRows < 1) throw new InvariantError("Gagal membuat user baru, silahkan coba kembali");
@@ -67,7 +67,7 @@ exports.getUserWhereEmail = async (email) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM users WHERE email=?";
   const sqlEscapeVal = [email];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new InvariantError("Gagal akun tidak tersedia");
   return results[0];
@@ -77,7 +77,7 @@ exports.getUserProfileByUserId = async (userId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM users WHERE id=?";
   const sqlEscapeVal = [userId];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new AuthorizationError("ID user tidak terdaftar");
   return results[0];
@@ -87,7 +87,7 @@ exports.updateUserProfile = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "UPDATE users SET fullname=?, email=?, password=? WHERE id=?";
   const sqlEscapeVal = [[payload.fullname], [payload.email], [payload.password], [userId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal memperbarui profile");
 };
@@ -96,7 +96,7 @@ exports.getDataAllGenres = async () => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM manga_genres";
   const results = await queryDatabase(conn, sqlString);
-  console.info(logging(sqlString));
+  // console.info(logging(sqlString));
   if (results.length < 1) throw new InvariantError("Data genre tidak tersedia");
   return results;
 };
@@ -105,7 +105,7 @@ exports.insertManga = async (values) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "INSERT INTO lists (title, link, status, createdAt) VALUES ?";
   const sqlEscapeVal = [values];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const insertedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal menambahakan manga baru");
   return insertedManga.insertId;
@@ -114,8 +114,18 @@ exports.insertManga = async (values) => {
 exports.getDataAllListsManga = async () => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC";
-  console.info(logging(sqlString));
+  // console.info(logging(sqlString));
   const results = await queryDatabase(conn, sqlString);
+  if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
+  return results;
+};
+
+exports.getDataAllListsMangaASC = async (limit) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM lists WHERE status='1' ORDER BY createdAt ASC LIMIT ?";
+  const sqlEscapeVal = [[limit]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
   return results;
 };
@@ -124,7 +134,7 @@ const insertSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "INSERT INTO settings (linkAgc, userId, emailAgc, passwordAgc, telegramId, tipeSchedule, actionCount, actionVal, cronPattern) VALUES ?";
   const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.idTelegram, payload.tipeSchedule, payload.actionCount, payload.actionVal, payload.cronPattern]]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal menyimpan data");
   return results.insertId;
@@ -134,7 +144,7 @@ const updateSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "UPDATE settings SET linkAgc=?, emailAgc=?, passwordAgc=?, telegramId=?, tipeSchedule=?, actionCount=?, actionVal=?, cronPattern=? WHERE userId=?";
   const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.idTelegram], [payload.tipeSchedule], [payload.actionCount], [payload.actionVal], [payload.cronPattern], [userId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const updatedSetting = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedSetting.affectedRows < 1) throw new InvariantError("Gagal memperbarui setting");
 };
@@ -143,7 +153,7 @@ const selectSettingWithUserId = async (userId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM settings WHERE userId=?";
   const sqlEscapeVal = [[userId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const resultSetting =  await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (resultSetting.length < 1) throw new NotFoundError("Setting belum tersedia");
 };
@@ -152,11 +162,22 @@ exports.getSettingWithUserId = async (userId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM settings WHERE userId=?";
   const sqlEscapeVal = [[userId]]
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new NotFoundError("Setting tidak ditemukan");
   return result;
 };
+
+exports.getSettingWithoutUserId = async () => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT * FROM settings LIMIT 1";
+  const result = await queryDatabase(conn, sqlString);
+  console.info(logging(sqlString));
+  if (result.length < 1) throw new NotFoundError("Setting tidak ditemukan");
+  return result[0];
+};
+
+
 
 exports.createOrUpdateSetting = async (userId, payload) => {
   try {
