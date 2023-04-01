@@ -3,7 +3,26 @@ const moreOptions = document.querySelectorAll(".more-option");
 const title = document.querySelector(".title-more-option");
 const formFinder = document.querySelector("#form-finder");
 const selectUrlGrabbing = document.querySelector("#url-grabing");
-const loadingElement = document.querySelector(".bg-loading");
+const buttonInsertAll = document.getElementById("buttonInsertAll");
+const toastElement = document.getElementById("toastGrabManga");
+const loadingGetter = document.getElementById("loading-getter");
+const loadingInsertAll = document.getElementById("loading-insert-all");
+const sectionResult = document.getElementById("section-result");
+
+const toastController = (resStatus, msg) => {
+  const toast = new bootstrap.Toast(toastElement);
+  if (resStatus === "success") {
+    toastElement.classList.remove("alert-light-danger");
+    toastElement.classList.add("alert-light-success");
+    toastElement.querySelector(".toast-body").textContent = msg;
+    toast.show();
+  } else {
+    toastElement.classList.remove("alert-light-success");
+    toastElement.classList.add("alert-light-danger");
+    toastElement.querySelector(".toast-body").textContent = msg;
+    toast.show();
+  }
+}
 
 const createTableData = (results) => {
   const tbody = document.querySelector("#bodyTable");
@@ -34,40 +53,63 @@ const createTableData = (results) => {
 }
 
 const getDataManga = async (payload) => {
-  try {
-    const response = await fetch("/manga/bychar",
-    {
-      method: "POST",
-      headers: {
-        "Accept": "application/json, text/plain, */*",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload),
-    });
-    const result = await response.json();
+  loadingGetter.classList.remove("d-none");
+  const response = await fetch("/manga/bychar",
+  {
+    method: "POST",
+    headers: {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload),
+  });
+  const result = await response.json();
+  if (result.status === "success") {
+    toastController(result.status, `Berhasil mengambil ${result.data.length} data manga`);
+    loadingGetter.classList.add("d-none");
     return result;
-  } catch (error) {
-    return error;
   }
+  toastController(result.status, result.message);
+  loadingGetter.classList.add("d-none");
 };
 
 const insertListManga = async (targetEl) => {
+  targetEl.disabled = true;
   const targetParentElement = targetEl.parentElement.parentElement;
-
   const title = targetParentElement.querySelector("td:nth-child(2)").textContent;
   const link = targetParentElement.querySelector("td:nth-child(3)").textContent;
   const status = targetParentElement.querySelector("td:nth-child(4) > select").value;
-  console.log({ title, link, status });
   const response = await fetch("/manga/add", {
     method: "POST",
     headers: {
       "Accept": "application/json, text/plain, */*",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ title, link, status, createdAt: new Date(Date.now())}),
+    body: JSON.stringify({ title, link, status }),
   });
   const result = await response.json();
-  console.table(result);
+  if (result.status === "success") {
+    targetEl.textContent = "SUCCESS";
+    targetEl.classList.remove("btn-orange");
+    targetEl.classList.add("btn-success");
+  } else {
+    targetEl.textContent = "FAILED";
+    targetEl.classList.remove("btn-orange");
+    targetEl.classList.add("btn-danger");
+  }
+};
+
+const insertListMangaBulk = async (data) => { 
+  const response = await fetch("/manga/add/bulk", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ dataManga: data }),
+  });
+  const result = await response.json();
+  toastController(result.status, result.message);
 };
 
 const listsResultMangaAction = () => {
@@ -142,13 +184,31 @@ formFinder.addEventListener("submit", async (event) => {
     }
   });
   if (Object.keys(payload).length >= minData) {
-    loadingElement.classList.remove("d-none");
     const listsManga = await getDataManga(payload);
-    console.log(listsManga);
-    if (listsManga.status === "success") {
-      createTableData(listsManga.data);
-      loadingElement.classList.add("d-none");
-      listsResultMangaAction();
-    }
+    createTableData(listsManga.data);
+    listsResultMangaAction();
   } 
+});
+
+// Publish All Button Action
+buttonInsertAll.addEventListener("click", async () => {
+  console.log("Start");
+  const inputCheckInTables = document.querySelectorAll(".form-check-input");
+  const resultPayload = [];
+
+  inputCheckInTables.forEach((inputCheck) => {
+    if (inputCheck.checked) {
+      const tableRow = inputCheck.parentElement.parentElement;
+      const title = tableRow.querySelector("td:nth-child(2)").textContent;
+      const link = tableRow.querySelector("td:nth-child(3)").textContent;
+      const status = tableRow.querySelector("td:nth-child(4) > select").value;
+      resultPayload.push({
+        title,
+        link,
+        status,
+      });
+    }
+  });
+  console.log(resultPayload);
+  await insertListMangaBulk(resultPayload)
 });

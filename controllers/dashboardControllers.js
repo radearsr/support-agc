@@ -168,16 +168,37 @@ const postGrebMangaWithChar = async (req, res) => {
 const postAddNewManga = async (req, res) => {
   try {
     const payload = req.body;
-    const addedMangaId = await localMysqlServices.insertManga([[
+    const addedManga = await localMysqlServices.insertManga([[
       payload.title,
       payload.link,
       payload.status,
-      payload.createdAt
+      new Date(Date.now())
     ]]);
     res.statusCode = 201;
     res.json({
       status: "success",
-      message: `Berhasil menambahkan lists manga baru dengan ID ${addedMangaId}`,
+      message: `Berhasil menambahkan lists manga baru dengan ID ${addedManga.inserId}`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  }
+};
+
+const postAddNewMangaBulk = async (req, res) => {
+  try {
+    const payload = req.body;
+    const restucturePayload = payload.dataManga.map((data) => [data.title, data.link, data.status, new Date(Date.now())]);
+    console.log(restucturePayload);
+    const addedManga = await localMysqlServices.insertManga(restucturePayload);
+    res.statusCode = 201;
+    res.json({
+      status: "success",
+      message: `Berhasil menambahkan lists manga baru dengan ID ${addedManga.affectedRows}`,
     });
   } catch (error) {
     console.error(error);
@@ -220,5 +241,6 @@ module.exports = {
   postAccountController,
   postGrebMangaWithChar,
   postAddNewManga,
+  postAddNewMangaBulk,
   postSettingController,
 };

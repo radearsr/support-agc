@@ -35,10 +35,7 @@ let job;
 
 setInterval(async () => {
   try {
-    console.log(currentPattern);
     const settings = await localMysqlServices.getSettingWithoutUserId();
-    console.log("CRON PATTERN", settings.cronPattern);
-    console.log(settings.cronPattern !== currentPattern);
     if (settings.cronPattern !== currentPattern) {
       console.log("CRON PATTERN", settings.cronPattern)
       currentPattern = settings.cronPattern;

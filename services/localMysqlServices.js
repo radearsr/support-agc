@@ -1,6 +1,5 @@
 require("dotenv").config();
 const mysql = require("mysql");
-const AuthenticationError = require("../exceptions/AuthenticationError");
 const AuthorizationError = require("../exceptions/AuthorizationError");
 const InvariantError = require("../exceptions/InvariantError");
 const NotFoundError = require("../exceptions/NotFoundError");
@@ -108,7 +107,7 @@ exports.insertManga = async (values) => {
   // console.info(logging(sqlString, sqlEscapeVal));
   const insertedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal menambahakan manga baru");
-  return insertedManga.insertId;
+  return insertedManga;
 };
 
 exports.getDataAllListsManga = async () => {
@@ -124,7 +123,7 @@ exports.getDataAllListsMangaASC = async (limit) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM lists WHERE status='1' ORDER BY createdAt ASC LIMIT ?";
   const sqlEscapeVal = [[limit]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
   return results;
@@ -172,7 +171,7 @@ exports.getSettingWithoutUserId = async () => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM settings LIMIT 1";
   const result = await queryDatabase(conn, sqlString);
-  console.info(logging(sqlString));
+  // console.info(logging(sqlString));
   if (result.length < 1) throw new NotFoundError("Setting tidak ditemukan");
   return result[0];
 };
