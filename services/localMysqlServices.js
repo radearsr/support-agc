@@ -110,6 +110,25 @@ exports.insertManga = async (values) => {
   return insertedManga;
 };
 
+exports.updateMangaById = async (listId, values) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "UPDATE lists SET title=?, link=?, status=? WHERE id=?";
+  const sqlEscapeVal = [[values.title], [values.link], [values.status], [listId]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const updatedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (updatedManga.affectedRows < 1) throw new InvariantError("Gagal Memperbarui List");
+};
+
+exports.deleteMangaById = async (listId) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "DELETE lists WHERE id=?";
+  const sqlEscapeVal = [[listId]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const deletedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  console.log(deletedManga);
+  if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal Menghapus List");
+};
+
 exports.getDataAllListsManga = async () => {
   const conn = await connectToDatabase(configDB);
   const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC";

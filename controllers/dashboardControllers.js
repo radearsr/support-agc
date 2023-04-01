@@ -84,7 +84,6 @@ const settingPageController = async (req, res) => {
   } = req.session;
   try {
     const result = await localMysqlServices.getSettingWithUserId(userId);
-    // console.log(result);
     res.render("pages/setting", {
       title: "Setting - Dashboard Support AGC",
       fullName: fullname,
@@ -147,7 +146,7 @@ const postAccountController = async (req, res) => {
   }
 };
 
-const postGrebMangaWithChar = async (req, res) => {
+const postGrebMangaWithCharController = async (req, res) => {
   try {
     const { linkTarget, firstChar, maxData } = req.body;
     const results = await grabbingServices.getMangaWithSplitChar(linkTarget, firstChar, maxData);
@@ -165,7 +164,7 @@ const postGrebMangaWithChar = async (req, res) => {
   }
 };
 
-const postAddNewManga = async (req, res) => {
+const postAddNewMangaController = async (req, res) => {
   try {
     const payload = req.body;
     const addedManga = await localMysqlServices.insertManga([[
@@ -189,16 +188,15 @@ const postAddNewManga = async (req, res) => {
   }
 };
 
-const postAddNewMangaBulk = async (req, res) => {
+const postAddNewMangaBulkController = async (req, res) => {
   try {
     const payload = req.body;
     const restucturePayload = payload.dataManga.map((data) => [data.title, data.link, data.status, new Date(Date.now())]);
-    console.log(restucturePayload);
     const addedManga = await localMysqlServices.insertManga(restucturePayload);
     res.statusCode = 201;
     res.json({
       status: "success",
-      message: `Berhasil menambahkan lists manga baru dengan ID ${addedManga.affectedRows}`,
+      message: `Berhasil menambahkan ${addedManga.affectedRows} lists manga`,
     });
   } catch (error) {
     console.error(error);
@@ -209,6 +207,55 @@ const postAddNewMangaBulk = async (req, res) => {
     });
   }
 };
+
+const putListMangaController = async (req, res) => {
+  try {
+    const { listId } = req.params;
+    const payload = req.body;
+    await localMysqlServices.updateMangaById(listId, payload);
+    res.json({
+      status: "success",
+      message: "Berhasil memperbarui list",
+    });
+  } catch (error) {
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      res.json({
+        status: "fail",
+        message: error.message,
+      });
+    }
+    console.log(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami"
+    });
+  }
+};
+
+const deleteListMangaController = async (req, res) => {
+  try {
+    const { listId } = req.params;
+    await localMysqlServices.deleteMangaById(listId);
+  } catch (error) {
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      res.json({
+        status: "fail",
+        message: error.message,
+      });
+    }
+    console.log(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami"
+    });
+  }
+};
+
+
 
 const postSettingController = async (req, res) => {
   try {
@@ -239,8 +286,10 @@ module.exports = {
   settingPageController,
   accountPageController,
   postAccountController,
-  postGrebMangaWithChar,
-  postAddNewManga,
-  postAddNewMangaBulk,
+  postGrebMangaWithCharController,
+  postAddNewMangaController,
+  putListMangaController,
+  deleteListMangaController,
+  postAddNewMangaBulkController,
   postSettingController,
 };

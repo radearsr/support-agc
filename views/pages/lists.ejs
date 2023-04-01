@@ -145,7 +145,7 @@
                       <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>">
                         <i class="bi bi-pencil-square"></i>
                       </button>
-                      <button type="button" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>">
+                      <button type="submit" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>">
                         <i class="bi bi-trash-fill"></i>
                       </button>
                     </td>
@@ -166,8 +166,9 @@
                       </svg>
                     </button>
                   </div>
-                  <form action="#" id="form-setting">
+                  <form action="#" id="form-modal-edit">
                     <div class="modal-body">
+                      <div class="alert d-none" id="alert-in-modal"></div>
                       <label for="title-manga">Judul: </label>
                       <div class="form-group">
                         <input type="text" name="title" id="title-manga" placeholder="Lorem Ipsum" class="form-control">
@@ -186,11 +187,9 @@
                     </div>
                     <div class="modal-footer d- justify-content-center">
                       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
-                        <i class="bx bx-x d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Tutup</span>
                       </button>
-                      <button type="button" class="btn btn-orange ml-1" data-bs-dismiss="modal">
-                        <i class="bx bx-check d-block d-sm-none"></i>
+                      <button type="submit" class="btn btn-orange ml-1">
                         <span class="d-none d-sm-block">Simpan</span>
                       </button>
                     </div>
@@ -218,11 +217,9 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
                       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
-                        <i class="bx bx-x d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Tutup</span>
                       </button>
                       <button type="button" class="btn btn-orange ml-1" data-bs-dismiss="modal">
-                        <i class="bx bx-check d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Iya, Hapus</span>
                       </button>
                     </div>

@@ -30,7 +30,7 @@ const createTableData = (results) => {
     const tableDataText = `
       <tr>
         <td>
-          <input type="checkbox" class="form-check-input form-check-primary" checked="" name="customCheck" id="customColorCheck1">
+          <input type="checkbox" class="form-check-input form-check-primary" checked="" name="checkMangaList" id="customColorCheck1">
         </td>
         <td>${result.title}</td>
         <td>${result.link}</td>
@@ -99,7 +99,7 @@ const insertListManga = async (targetEl) => {
   }
 };
 
-const insertListMangaBulk = async (data) => { 
+const insertListMangaBulk = async (data) => {
   const response = await fetch("/manga/add/bulk", {
     method: "POST",
     headers: {
@@ -110,6 +110,7 @@ const insertListMangaBulk = async (data) => {
   });
   const result = await response.json();
   toastController(result.status, result.message);
+  loadingInsertAll.classList.add("d-none")
 };
 
 const listsResultMangaAction = () => {
@@ -185,6 +186,7 @@ formFinder.addEventListener("submit", async (event) => {
   });
   if (Object.keys(payload).length >= minData) {
     const listsManga = await getDataManga(payload);
+    sectionResult.classList.remove("d-none");
     createTableData(listsManga.data);
     listsResultMangaAction();
   } 
@@ -192,8 +194,10 @@ formFinder.addEventListener("submit", async (event) => {
 
 // Publish All Button Action
 buttonInsertAll.addEventListener("click", async () => {
-  console.log("Start");
-  const inputCheckInTables = document.querySelectorAll(".form-check-input");
+  console.log(loadingInsertAll)
+  loadingInsertAll.classList.remove("d-none");
+  const inputCheckInTables = document.querySelectorAll("input[name='checkMangaList']");
+  console.log(inputCheckInTables[0]);
   const resultPayload = [];
 
   inputCheckInTables.forEach((inputCheck) => {
@@ -209,6 +213,5 @@ buttonInsertAll.addEventListener("click", async () => {
       });
     }
   });
-  console.log(resultPayload);
   await insertListMangaBulk(resultPayload)
 });
