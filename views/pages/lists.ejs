@@ -119,6 +119,7 @@
               <table class="table table-striped mt-2" id="table1">
                 <thead>
                   <tr>
+                    <th>No</th>
                     <th>Judul</th>
                     <th>Link</th>
                     <th>Status</th>
@@ -133,13 +134,11 @@
                   <% } %>
                   <% for( let i = 0; i < lists.length; i++ ) { %>
                   <tr>
+                    <td><%= i + 1 %></td>
                     <td><%= lists[i].title %></td>
                     <td><a href="<%= lists[i].link %>" target="_blank"><%= lists[i].link %></a></td>
                     <td>
-                      <select name="status" class="form-select">
-                        <option value="1" <%= lists[i].status === "1" ? "selected" : "" %>>Active</option>
-                        <option value="0" <%= lists[i].status === "0" ? "selected" : "" %>>Non Active</option>
-                      </select>
+                      <p class="badge <%= lists[i].status === "1" ? "bg-success" : "bg-danger" %>"><%= lists[i].status === "1" ? "Active" : "Inactive" %></p>
                     </td>
                     <td class="text-center">
                       <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>">
@@ -166,7 +165,7 @@
                       </svg>
                     </button>
                   </div>
-                  <form action="#" id="form-modal-edit">
+                  <form action="#" method="post" id="form-modal-edit">
                     <div class="modal-body">
                       <div class="alert d-none" id="alert-in-modal"></div>
                       <label for="title-manga">Judul: </label>
@@ -211,7 +210,7 @@
                       </svg>
                     </button>
                   </div>
-                  <form action="#">
+                  <form action="#" method="post" id="form-modal-delete">
                     <div class="modal-body">
                       <p class="fs-5 text-center"></p>
                     </div>
@@ -219,7 +218,7 @@
                       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
                         <span class="d-none d-sm-block">Tutup</span>
                       </button>
-                      <button type="button" class="btn btn-orange ml-1" data-bs-dismiss="modal">
+                      <button type="submit" class="btn btn-orange ml-1" data-bs-dismiss="modal">
                         <span class="d-none d-sm-block">Iya, Hapus</span>
                       </button>
                     </div>

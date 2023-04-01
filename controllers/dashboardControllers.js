@@ -57,7 +57,6 @@ const listsPageController = async (req, res) => {
     });
   } catch (error) {
     if (error instanceof ClientError) {
-      console.log("TEst")
       res.statusCode = error.statusCode;
       return res.render("pages/lists", {
         title: "Lists - Dashboard Support AGC",
@@ -156,6 +155,38 @@ const postGrebMangaWithCharController = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      res.json({
+        status: "fail",
+        message: error.message,
+      });
+    }
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  }
+};
+
+const postGrebMangaWithGenresController = async (req, res) => {
+  try {
+    const { linkTarget, status, type, orderBy, genres } = req.body;
+    const results = await grabbingServices.getMangaWithCategory(linkTarget, genres, status, type, orderBy);
+    res.json({
+      status: "success",
+      data: results,
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      res.json({
+        status: "fail",
+        message: error.message,
+      });
+    }
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -213,24 +244,10 @@ const putListMangaController = async (req, res) => {
     const { listId } = req.params;
     const payload = req.body;
     await localMysqlServices.updateMangaById(listId, payload);
-    res.json({
-      status: "success",
-      message: "Berhasil memperbarui list",
-    });
+    res.redirect("/dashboard/lists"); 
   } catch (error) {
-    if (error instanceof ClientError) {
-      res.statusCode = error.statusCode;
-      res.json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-    console.log(error);
-    res.statusCode = 500;
-    res.json({
-      status: "error",
-      message: "Terjadi kegagalan pada server kami"
-    });
+    console.error(error);
+    res.redirect("/dashboard/lists");
   }
 };
 
@@ -238,24 +255,12 @@ const deleteListMangaController = async (req, res) => {
   try {
     const { listId } = req.params;
     await localMysqlServices.deleteMangaById(listId);
+    res.redirect("/dashboard/lists"); 
   } catch (error) {
-    if (error instanceof ClientError) {
-      res.statusCode = error.statusCode;
-      res.json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-    console.log(error);
-    res.statusCode = 500;
-    res.json({
-      status: "error",
-      message: "Terjadi kegagalan pada server kami"
-    });
+    console.error(error);
+    res.redirect("/dashboard/lists");
   }
 };
-
-
 
 const postSettingController = async (req, res) => {
   try {
@@ -287,6 +292,7 @@ module.exports = {
   accountPageController,
   postAccountController,
   postGrebMangaWithCharController,
+  postGrebMangaWithGenresController,
   postAddNewMangaController,
   putListMangaController,
   deleteListMangaController,

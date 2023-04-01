@@ -121,7 +121,7 @@ exports.updateMangaById = async (listId, values) => {
 
 exports.deleteMangaById = async (listId) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "DELETE lists WHERE id=?";
+  const sqlString = "DELETE FROM lists WHERE id=?";
   const sqlEscapeVal = [[listId]];
   console.info(logging(sqlString, sqlEscapeVal));
   const deletedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
