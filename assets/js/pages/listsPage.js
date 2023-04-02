@@ -75,22 +75,16 @@ modalEdit.addEventListener("show.bs.modal", (event) => {
   inputLink.value = link;
   selectStatus.value = status;
 
-  formSubmit.addEventListener("submit", async (el) => {
-    el.preventDefault();
-    const payload = {
-      title: inputTitle.value,
-      link: inputLink.value,
-      status: selectStatus.value,
-    };
-    await actionUpdateList(payload, listId, 3000);
-  });
+  formSubmit.setAttribute("action", `/manga/${listId}/edit`);
 });
 
 modalDelete.addEventListener("show.bs.modal", (event) => {
   const button = event.relatedTarget;
+  const formSubmit = event.target.querySelector("#form-modal-delete");
   const fields = button.getAttribute("data-bs-field");
-  const [title, id] = fields.split("],,[");
+  const [title, listId] = fields.split("],,[");
   const textMessage = event.target.querySelector(".modal-body > p");
   textMessage.textContent = `Apakah anda yakin ingin menghapus "${title}" dari list auto publish?`;
+  formSubmit.setAttribute("action", `/manga/${listId}/delete`);
 });
 

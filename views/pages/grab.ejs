@@ -241,8 +241,8 @@
                         <div class="col-12">
                           <div class="form-group">
                             <label for="genre-anime">Genres</label>
+                            <span class="d-block">*Jika anda tidak memilih genre maka defaultnya adalah ALL genre</span>
                             <select class="choices form-select" id="genre-anime" multiple="multiple">
-                              <option value="all" selected>All</option>
                               <% for(let i = 0; i < genres.length; i++) { %>
                               <option value="<%= genres[i].id_genre %>"><%= genres[i].name %></option>
                               <% } %>

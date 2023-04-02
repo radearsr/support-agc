@@ -52,9 +52,9 @@ const createTableData = (results) => {
   tbody.innerHTML = mappedResult.join("");
 }
 
-const getDataManga = async (payload) => {
+const getDataManga = async (payload, linkPath) => {
   loadingGetter.classList.remove("d-none");
-  const response = await fetch("/manga/bychar",
+  const response = await fetch(linkPath,
   {
     method: "POST",
     headers: {
@@ -169,23 +169,41 @@ formFinder.addEventListener("submit", async (event) => {
         const name = selects.getAttribute("name");
         const labelTag = selects.parentElement.querySelector("label");
         const spanTag = selects.parentElement.querySelector("span");
+        if (selects.getAttribute("id") === "genre-anime") {
+          console.log("test");
+          const options = selects.querySelectorAll("option");
+          const mangaGenres = []
+          options.forEach((option) => (
+            mangaGenres.push(option.getAttribute("value"))
+          ));
+          payload["genres"] = mangaGenres.length < 1 ? "all": mangaGenres;
+          return;
+        }
         if (selects.value === "Pilih") {
           labelTag.classList.add("text-danger");
           spanTag.classList.remove("d-none");
           spanTag.classList.add("text-danger");
           selects.classList.add("is-invalid");
-        } else {
+        } else if (labelTag.classList.contains("text-danger") || spanTag.classList.contains("d-none") || spanTag.classList.contains("text-danger") || selects.classList.contains("is-invalid")) {
           labelTag.classList.remove("text-danger");
           spanTag.classList.add("d-none");
           spanTag.classList.remove("text-danger");
           selects.classList.remove("is-invalid");
           payload[name] = selects.value;
+        } else {
+          payload[name] = selects.value;
         }
       });
     }
   });
+  console.log(payload);
   if (Object.keys(payload).length >= minData) {
-    const listsManga = await getDataManga(payload);
+    let listsManga;
+    if (minData === 3) {
+      listsManga = await getDataManga(payload, "/manga/bychar");
+    } else if (minData === 5) {
+      listsManga = await getDataManga(payload, "/manga/bygenre");
+    }
     sectionResult.classList.remove("d-none");
     createTableData(listsManga.data);
     listsResultMangaAction();

@@ -23,14 +23,11 @@ router
   .post("/dashboard/account", dashboardController.postAccountController)
   .post("/dashboard/setting", dashboardController.postSettingController)
   .post("/manga/bychar", dashboardController.postGrebMangaWithCharController)
+  .post("/manga/bygenre", dashboardController.postGrebMangaWithGenresController)
   .post("/manga/add", dashboardController.postAddNewMangaController)
-  .post("/manga/add/bulk", dashboardController.postAddNewMangaBulkController);
-
-router
-  .put("/manga/:listId", dashboardController.putListMangaController);
-
-router
-  .delete("/manga/:listId", dashboardController.deleteListMangaController);
+  .post("/manga/add/bulk", dashboardController.postAddNewMangaBulkController)
+  .post("/manga/:listId/edit", dashboardController.putListMangaController)
+  .post("/manga/:listId/delete", dashboardController.deleteListMangaController);
 
 router.all("*", (req, res) => {
   res.statusCode = 404;
