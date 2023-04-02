@@ -1,4 +1,6 @@
 const wpMysqlServices = require("./wpMysqlServices");
+const getterMangaServices = require("../services/getterMangaServices");
+const getterAgcServices = require("../services/getterAgcServices");
 const utils = require("./utils");
 
 const mangaPublish = async (data, linkWordpress) => {
@@ -80,6 +82,66 @@ const publishChapter = async (data, parentPostId, urlWordpress) => {
     throw new Error(error.message);
   }
 };
+
+const cronActionPublish = async (linkAgc, listsManga, email, password, linkWp) => {
+  console.log({linkAgc, listsManga, email, password, linkWp})
+  listsManga.forEach(async (listManga, idx) => {
+    setTimeout(async () => {
+      console.log("START");
+      // Get Details Manga
+      const detailManga = await getterAgcServices.getTokenAndGetDetailManga(linkAgc, listManga.link, email, password);
+      // Get And Post Manga Chapter
+      const mangaChapters = detailManga.data.chapters;
+      try {
+        console.log("START TRY");
+        // Check Available Post In Wordpress
+        const eroSeries = await wpMysqlServices.getPostIdWherePostName(listManga.title);
+        console.log(eroSeries);
+        const currentTotalChapters = await wpMysqlServices.getTotalChapterWhereEroSeri(eroSeries);
+        console.log(currentTotalChapters);
+        console.log({ chapters: mangaChapters.length, currentTotalChapters })
+        if (mangaChapters.length > currentTotalChapters) {
+          console.log("Masuk IF");
+          for (let idx = currentTotalChapters; idx < mangaChapters.length; idx++) {
+            setTimeout(async () => {
+              // console.log({ linkAgc, linkChapter, email, password });
+              console.log(mangaChapters[idx])
+              const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, mangaChapters[idx].read_link, email, password);
+              await publishChapter(chapterManga.data, eroSeries, linkWp);
+            }, 2000 * idx);
+          }
+        } else {
+          console.log("CHAPTER_UP_TO_DATE");
+        }
+      } catch (error) {
+        if (error.message === "MYSQL_NOTFOUND_SELECT_POST_NAME") {
+          const publishedMangaId = await mangaPublish(detailManga.data, linkWp);
+          mangaChapters.forEach(async (chapter, idx) => {
+            if (idx <= 2) {
+              setTimeout(async () => {
+                // console.log({ linkAgc, linkChapter, email, password });
+                const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, chapter.read_link, email, password);
+                await publishChapter(chapterManga.data, publishedMangaId, linkWp);
+              }, 2000 * idx);
+            }
+          });
+        }
+        console.error(error);
+      }
+    }, idx * 1000);
+  });
+};
+
+(async () => {
+ cronActionPublish("https://agc.deyapro.com", [{
+  title: "Good Hunting",
+  link: "https://kiryuu.id/manga/good-hunting/"
+ }], "megumi@kyo.com", "iloveyou", "https://wordpress");
+})()
+
+
+
+
 
 module.exports = {
   mangaPublish,

@@ -530,3 +530,22 @@ exports.updateOrCreateEroLatestChapter = async (parentPostId, eroLatest) => {
   };
 };
 
+exports.getPostIdWherePostName = async (title) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `SELECT * FROM ${PREFIXDB}_posts WHERE post_name=? LIMIT 1`;
+  const sqlEscapeVal = [slugs(title)];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const posts = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (posts.length < 1) throw new Error("MYSQL_NOTFOUND_SELECT_POST_NAME");
+  return posts[0].ID;
+};
+
+exports.getTotalChapterWhereEroSeri = async (eroSeri) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `SELECT COUNT(DISTINCT post_id) AS total_chapters FROM ${PREFIXDB}_postmeta WHERE meta_key=? AND meta_value=?`;
+  const sqlEscapeVal = [["ero_seri"], [eroSeri]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (result[0].total_chapters < 1) throw new Error("MYSQL_COUNT_POST_META");
+  return result[0].total_chapters;
+};
