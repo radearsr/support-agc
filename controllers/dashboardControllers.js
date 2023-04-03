@@ -46,14 +46,26 @@ const listsPageController = async (req, res) => {
     fullname,
     role,
   } = req.session;
+  let { currentPage=1, pageSize=20 } = req.query;
+  // console.log({ currentPage, pageSize });
+  currentPage = parseFloat(currentPage);
+  pageSize = parseFloat(pageSize);
   try {
-    const resultLists = await localMysqlServices.getDataAllListsManga();
+    const totalData = await localMysqlServices.getCountAllListsManga();
+    const totalPage = Math.ceil(totalData / pageSize);
+    const skippedData = (currentPage * pageSize) - pageSize;
+    const resultLists = await localMysqlServices.getDataAllListsManga(skippedData, pageSize);
     res.render("pages/lists", {
       title: "Lists - Dashboard Support AGC",
       fullName: fullname,
       roleName: role,
       activePage: "Lists",
       lists: resultLists,
+      pages: {
+        currentPage,
+        totalPage,
+        pageSize,
+      }
     });
   } catch (error) {
     if (error instanceof ClientError) {

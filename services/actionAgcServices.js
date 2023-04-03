@@ -1,5 +1,4 @@
 const wpMysqlServices = require("./wpMysqlServices");
-const getterMangaServices = require("../services/getterMangaServices");
 const getterAgcServices = require("../services/getterAgcServices");
 const utils = require("./utils");
 

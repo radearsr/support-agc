@@ -129,13 +129,23 @@ exports.deleteMangaById = async (listId) => {
   if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal Menghapus List");
 };
 
-exports.getDataAllListsManga = async () => {
+exports.getDataAllListsManga = async (skip, take) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC";
-  // console.info(logging(sqlString));
-  const results = await queryDatabase(conn, sqlString);
+  const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC LIMIT ?, ?";
+  const sqlEscapeVal = [[skip], [take]];
+  // console.info(logging(sqlString, sqlEscapeVal));
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
   return results;
+};
+
+exports.getCountAllListsManga = async () => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = "SELECT COUNT(*) AS total_data FROM lists";
+  // console.info(logging(sqlString));
+  const results = await queryDatabase(conn, sqlString);
+  if (results[0].total_data < 1) throw new NotFoundError("lists manga tidak ditemukan");
+  return results[0].total_data ; 
 };
 
 exports.getDataAllListsMangaASC = async (limit) => {
@@ -194,8 +204,6 @@ exports.getSettingWithoutUserId = async () => {
   if (result.length < 1) throw new NotFoundError("Setting tidak ditemukan");
   return result[0];
 };
-
-
 
 exports.createOrUpdateSetting = async (userId, payload) => {
   try {
