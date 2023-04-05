@@ -116,51 +116,57 @@
         <section class="section">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-orange mb-1">
-                  <i class="bi bi-plus-lg"></i> Tambah list
-                </button>
-                <form class="d-flex" role="search">
-                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                  <button class="btn btn-orange" type="submit">Search</button>
-                </form>
+              <div class="row justify-content-between">
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-orange mb-1" data-bs-toggle="modal" data-bs-target="#modalAdd" >
+                    <i class="bi bi-plus-lg"></i> Tambah list
+                  </button>
+                </div>
+                <div class="col-md-4">
+                  <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" name="keyword" aria-label="Search">
+                    <button class="btn btn-orange" type="submit">Search</button>
+                  </form>
+                </div>
               </div>
-              <table class="table table-striped mt-2" id="table1">
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Judul</th>
-                    <th>Link</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% if (lists.length < 1) {%>
-                  <tr>
-                    <td colspan="4" class="text-center"><%= msg %></td>
-                  </tr>
-                  <% } %>
-                  <% for( let i = 0; i < lists.length; i++ ) { %>
-                  <tr>
-                    <td><%= i + 1 %></td>
-                    <td><%= lists[i].title %></td>
-                    <td><a href="<%= lists[i].link %>" target="_blank"><%= lists[i].link %></a></td>
-                    <td>
-                      <p class="badge <%= lists[i].status === "1" ? "bg-success" : "bg-danger" %>"><%= lists[i].status === "1" ? "Active" : "Inactive" %></p>
-                    </td>
-                    <td class="text-center">
-                      <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                      <button type="submit" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <% } %>
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table class="table table-striped mt-2" id="table1">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Judul</th>
+                      <th>Link</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (lists.length < 1) {%>
+                    <tr>
+                      <td colspan="5" class="text-center"><%= msg %></td>
+                    </tr>
+                    <% } %>
+                    <% for( let i = 0; i < lists.length; i++ ) { %>
+                    <tr>
+                      <td><%= i + 1 %></td>
+                      <td><%= lists[i].title %></td>
+                      <td><a href="<%= lists[i].link %>" target="_blank"><%= lists[i].link %></a></td>
+                      <td>
+                        <p class="badge <%= lists[i].status === "1" ? "bg-success" : "bg-danger" %>"><%= lists[i].status === "1" ? "Active" : "Inactive" %></p>
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>">
+                          <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button type="submit" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
               <nav aria-label="navigation">
                 <ul class="pagination justify-content-end">
                   <% if ((pages.totalPage > 3) && (pages.currentPage > 1)) { %>
@@ -179,7 +185,7 @@
                       </span>
                     </a>
                   </li>
-                  <% if (pages.totalPage < 3) { %>
+                  <% if (pages.totalPage < 3 && pages.totalPage > 1) { %>
                     <% for (let idx = 0; idx < pages.totalPage; idx++) { %>
                       <li class="page-item <%= pages.currentPage === idx + 1 ? "active" : ""%>">
                         <a class="page-link" href="?currentPage=<%= idx + 1 %>&pageSize=<%= pages.pageSize %>">
@@ -222,6 +228,49 @@
                     </button>
                   </div>
                   <form action="#" method="post" id="form-modal-edit">
+                    <div class="modal-body">
+                      <div class="alert d-none" id="alert-in-modal"></div>
+                      <label for="title-manga">Judul: </label>
+                      <div class="form-group">
+                        <input type="text" name="title" id="title-manga" placeholder="Lorem Ipsum" class="form-control">
+                      </div>
+                      <label for="link-manga">Link: </label>
+                      <div class="form-group">
+                        <input type="url" id="link-manga" name="link" placeholder="https://loremipsum.com" class="form-control">
+                      </div>
+                      <label for="status-manga">Status: </label>
+                      <div class="form-group">
+                        <select name="status" id="status-manga" class="form-select">
+                          <option value="1">Active</option>
+                          <option value="0">Non Active</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal-footer d- justify-content-center">
+                      <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                        <span class="d-none d-sm-block">Tutup</span>
+                      </button>
+                      <button type="submit" class="btn btn-orange ml-1">
+                        <span class="d-none d-sm-block">Simpan</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade text-left" id="modalAdd" tabindex="-1" style="display: none;" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Tambah List</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <form action="/dashboard/lists/add" method="post" id="form-modal-add">
                     <div class="modal-body">
                       <div class="alert d-none" id="alert-in-modal"></div>
                       <label for="title-manga">Judul: </label>

@@ -133,18 +133,14 @@
                     <% let halamanAgc = "" %>
                     <% let emailAgc = "" %>
                     <% let passwordAgc = "" %>
+                    <% let linkWordpress = "" %>
                     <% let idTelegram = "" %>
-                    <% let tipeSchedule = "" %>
-                    <% let actionCount = "" %>
-                    <% let actionVal = "" %>
                     <% for (let i = 0; i < settings.length; i++) { %>
                     <% halamanAgc = settings[i].linkAgc %>
                     <% emailAgc = settings[i].emailAgc %>
                     <% passwordAgc = settings[i].passwordAgc %>
+                    <% linkWordpress = settings[i].linkWordpress %>
                     <% idTelegram = settings[i].telegramId %>
-                    <% tipeSchedule = settings[i].tipeSchedule.toLowerCase() %>
-                    <% actionCount = settings[i].actionCount %>
-                    <% actionVal = settings[i].actionVal %>
                     <% } %>
                     <form class="form" id="formSetting">
                       <h4 class="card-title">Setting AGC</h4>
@@ -167,6 +163,12 @@
                             <input type="password" id="password-agc" class="form-control" name="passwordAgc" placeholder="iloveyou" value="<%= passwordAgc %>" />
                           </div>
                         </div>
+                        <div class="col-md-6 col-12">
+                          <div class="form-group">
+                            <label for="url-wordpress">Link Wordpress</label>
+                            <input type="url" id="url-wordpress" class="form-control" name="linkWordpress" placeholder="iloveyou" value="<%= linkWordpress %>" />
+                          </div>
+                        </div>
                       </div>
                       <h4 class="card-title">Setting Notifikasi</h4>
                       <div class="row">
@@ -174,42 +176,6 @@
                           <div class="form-group">
                             <label for="first-name-column">ID Chat Telegram</label>
                             <input type="number" class="form-control" placeholder="12341234" name="idTelegram" value="<%= idTelegram %>" />
-                          </div>
-                        </div>
-                      </div>
-                      <h4 class="card-title">Setting Schedule</h4>
-                      <div class="row">
-                        <div class="col-md-6 col-12">
-                          <div class="form-group">
-                            <label for="tipe-schedule">Tipe Schedule</label>
-                            <select id="tipe-schedule" name="tipeSchedule" class="form-select">
-                              <option <%= tipeSchedule === "" ? "selected" : "" %>>Off</option>
-                              <option value="perhari" <%= tipeSchedule === "perhari" ? "selected" : "" %>>Tiap Hari</option>
-                              <option value="perjam" <%= tipeSchedule === "perjam" ? "selected" : "" %>>Tiap Jam</option>
-                              <option value="permenit" <%= tipeSchedule === "permenit" ? "selected" : "" %>>Tiap Menit</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                          <div class="form-group">
-                            <label for="action-count">Tiap Aksi Akan Publish Berapa Data</label>
-                            <div class="input-group">
-                              <input type="number" class="form-control" id="action-count" placeholder="1" name="actionCount" value="<%= actionCount %>" />
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-12">
-                          <div class="form-group action-value perhari d-none">
-                            <label for="field-perhari">Aksi Tiap Pukul</label>
-                            <input type="time" class="form-control" id="field-perhari" placeholder="Username" value="<%= tipeSchedule === "perhari" ? actionVal : "" %>" />
-                          </div>
-                          <div class="form-group action-value perjam d-none">
-                            <label for="field-perjam">Aksi Tiap Berapa Jam Sekali</label>
-                            <input type="number" id="field-perjam" class="form-control" placeholder="1" value="<%= tipeSchedule === "perjam" ? actionVal : "" %>" />
-                          </div>
-                          <div class="form-group action-value permenit d-none">
-                            <label for="field-permenit">Aksi Tiap Berapa Menit Sekali</label>
-                            <input type="number" class="form-control" placeholder="10" id="field-permenit" value="<%= tipeSchedule === "permenit" ? actionVal : "" %>" />
                           </div>
                         </div>
                         <div class="col-12 d-flex justify-content-center">

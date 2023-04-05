@@ -2,6 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
 const NotFoundError = require("../exceptions/NotFoundError");
+const fs = require("fs");
 
 const getMangaWithSplitChar = async (endpoint, character, maxData) => {
   const { data } = await axios.get(`${endpoint}/manga/list-mode`);
@@ -42,13 +43,14 @@ const getMangaWithCategory = async (endpoint, genresId="all", status, type, orde
   if (genresId !== "all") {
     const mappedGenresId = genresId.map((id) => (`genre%5B%5D=${id}`));
     const genresForUrl = mappedGenresId.join("&");
-    const { data } = await axios.get(`${endpoint}/manga?${genresForUrl}&status=${status}&type=${type}&order=${order}`);
+    const { data } = await axios.get(`${endpoint}/manga?${genresForUrl}&status=${status === "all" ? "" : status}&type=${type === "all" ? "" : type}&order=${order === "default" ? "" : order}`);
     dataHtml = data;
   } else {
     const { data } = await axios.get(`${endpoint}/manga/?status=${status === "all" ? "" : status}&type=${type === "all" ? "" : type}&order=${order === "default" ? "" : order}`);
     dataHtml = data;
   }
-  console.log(dataHtml);
+  // console.log(dataHtml);
+  // fs.writeFileSync("./index.html", dataHtml)
   const $ = cheerio.load(dataHtml);
   const resultLists = [];
   $(".bsx").each((_idx, el) => {

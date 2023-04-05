@@ -129,23 +129,24 @@ exports.deleteMangaById = async (listId) => {
   if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal Menghapus List");
 };
 
-exports.getDataAllListsManga = async (skip, take) => {
+exports.getDataAllListsManga = async (skip, keyword, take) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "SELECT * FROM lists ORDER BY createdAt DESC LIMIT ?, ?";
-  const sqlEscapeVal = [[skip], [take]];
+  const sqlString = "SELECT * FROM lists WHERE title LIKE ? ORDER BY createdAt DESC LIMIT ?, ?";
+  const sqlEscapeVal = [[`%${keyword.toLowerCase()}%`], [skip], [take]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
   return results;
 };
 
-exports.getCountAllListsManga = async () => {
+exports.getCountAllListsManga = async (keyword) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "SELECT COUNT(*) AS total_data FROM lists";
-  // console.info(logging(sqlString));
-  const results = await queryDatabase(conn, sqlString);
+  const sqlString = `SELECT COUNT(*) AS total_data FROM lists WHERE title LIKE ?`;
+  const sqlEscapeVal = [[`%${keyword.toLowerCase()}%`]];
+  // console.info(logging(sqlString, sqlEscapeVal));
+  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results[0].total_data < 1) throw new NotFoundError("lists manga tidak ditemukan");
-  return results[0].total_data ; 
+  return results[0].total_data; 
 };
 
 exports.getDataAllListsMangaASC = async (limit) => {
@@ -160,8 +161,8 @@ exports.getDataAllListsMangaASC = async (limit) => {
 
 const insertSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "INSERT INTO settings (linkAgc, userId, emailAgc, passwordAgc, telegramId, tipeSchedule, actionCount, actionVal, cronPattern) VALUES ?";
-  const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.idTelegram, payload.tipeSchedule, payload.actionCount, payload.actionVal, payload.cronPattern]]];
+  const sqlString = "INSERT INTO settings (linkAgc, userId, emailAgc, passwordAgc, linkWordpress, telegramId) VALUES ?";
+  const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.linkWordpress, payload.idTelegram]]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal menyimpan data");
@@ -170,8 +171,8 @@ const insertSetting = async (userId, payload) => {
 
 const updateSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "UPDATE settings SET linkAgc=?, emailAgc=?, passwordAgc=?, telegramId=?, tipeSchedule=?, actionCount=?, actionVal=?, cronPattern=? WHERE userId=?";
-  const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.idTelegram], [payload.tipeSchedule], [payload.actionCount], [payload.actionVal], [payload.cronPattern], [userId]];
+  const sqlString = "UPDATE settings SET linkAgc=?, emailAgc=?, passwordAgc=?, linkWordpress=?, telegramId=? WHERE userId=?";
+  const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.linkWordpress], [payload.idTelegram], [userId]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const updatedSetting = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedSetting.affectedRows < 1) throw new InvariantError("Gagal memperbarui setting");

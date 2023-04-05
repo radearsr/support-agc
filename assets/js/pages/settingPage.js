@@ -4,21 +4,6 @@ const formSetting = document.querySelector("#formSetting");
 
 const toastSetting = document.querySelector("#toastSetting");
 
-selectedTipeSchedule.addEventListener("change", (event) => {
-  fieldsActionValue.forEach((field) => {
-    console.log(field);
-    if (field.classList.contains(event.target.value)) {
-      field.lastElementChild.setAttribute("name", "actionVal");
-      field.classList.remove("d-none");
-    } else if (field.classList.contains("d-none")) {
-      return;
-    } else {
-      field.lastElementChild.removeAttribute("name", "actionVal");
-      field.classList.add("d-none");
-    }
-  });
-});
-
 const cronPatternGenerator = (type, value) => {
   if (type === "perhari") {
     const [hours, minutes] = value.split(":");
@@ -50,25 +35,21 @@ const postToInsertSetting = async (payload) => {
 };
 
 formSetting.addEventListener("submit", async (evt) => {
+  console.log("Test");
   evt.preventDefault();
   const formData = new FormData(formSetting);
   const linkAgc = formData.get("linkAgc");
   const emailAgc = formData.get("emailAgc");
   const passwordAgc = formData.get("passwordAgc");
+  const linkWordpress = formData.get("linkWordpress");
   const idTelegram = formData.get("idTelegram");
-  const tipeSchedule = formData.get("tipeSchedule");
-  const actionCount = formData.get("actionCount");
-  const actionVal = formData.get("actionVal");
 
   const insertedSetting = await postToInsertSetting({
     linkAgc,
     emailAgc,
     passwordAgc,
+    linkWordpress,
     idTelegram,
-    tipeSchedule,
-    actionCount,
-    actionVal,
-    cronPattern: cronPatternGenerator(tipeSchedule, actionVal),
   });
 
   const toast = new bootstrap.Toast(toastSetting);

@@ -27,7 +27,8 @@ router
   .post("/manga/add", dashboardController.postAddNewMangaController)
   .post("/manga/add/bulk", dashboardController.postAddNewMangaBulkController)
   .post("/manga/:listId/edit", dashboardController.putListMangaController)
-  .post("/manga/:listId/delete", dashboardController.deleteListMangaController);
+  .post("/manga/:listId/delete", dashboardController.deleteListMangaController)
+  .post("/dashboard/lists/add", dashboardController.addMangaFromList)
 
 router.all("*", (req, res) => {
   res.statusCode = 404;

@@ -46,15 +46,15 @@ const listsPageController = async (req, res) => {
     fullname,
     role,
   } = req.session;
-  let { currentPage=1, pageSize=20 } = req.query;
+  let { currentPage=1, pageSize=20, keyword="" } = req.query;
   // console.log({ currentPage, pageSize });
   currentPage = parseFloat(currentPage);
   pageSize = parseFloat(pageSize);
   try {
-    const totalData = await localMysqlServices.getCountAllListsManga();
+    const totalData = await localMysqlServices.getCountAllListsManga(keyword);
     const totalPage = Math.ceil(totalData / pageSize);
     const skippedData = (currentPage * pageSize) - pageSize;
-    const resultLists = await localMysqlServices.getDataAllListsManga(skippedData, pageSize);
+    const resultLists = await localMysqlServices.getDataAllListsManga(skippedData, keyword, pageSize);
     res.render("pages/lists", {
       title: "Lists - Dashboard Support AGC",
       fullName: fullname,
@@ -77,10 +77,16 @@ const listsPageController = async (req, res) => {
         activePage: "Lists",
         lists: [],
         msg: error.message,
+        pages: {
+          currentPage: 0,
+          pageSize: 0,
+          totalPage: 0,
+        }
       });
     }
+    console.log(error);
     res.statusCode = 500;
-    return res.json({
+    res.json({
       status: "error",
       message: "Terjadi kegagalan pada server kami",
     });
@@ -194,7 +200,7 @@ const postGrebMangaWithGenresController = async (req, res) => {
     console.error(error);
     if (error instanceof ClientError) {
       res.statusCode = error.statusCode;
-      res.json({
+      return res.json({
         status: "fail",
         message: error.message,
       });
@@ -280,7 +286,7 @@ const postSettingController = async (req, res) => {
       userId,
     } = req.session;
     const payload = req.body;
-    console.log(payload);
+    // console.log(payload);
     await localMysqlServices.createOrUpdateSetting(userId, payload);
     res.json({
       status: "success",
@@ -294,6 +300,22 @@ const postSettingController = async (req, res) => {
     });
   }
 };
+
+const addMangaFromList = async (req, res) => {
+  try {
+    const payload = req.body;
+    await localMysqlServices.insertManga([[
+      payload.title,
+      payload.link,
+      payload.status,
+      new Date(Date.now())
+    ]]);
+    res.redirect("/dashboard/lists");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/dashboard/lists");
+  } 
+}
 
 
 module.exports = {
@@ -310,4 +332,5 @@ module.exports = {
   deleteListMangaController,
   postAddNewMangaBulkController,
   postSettingController,
+  addMangaFromList,
 };
