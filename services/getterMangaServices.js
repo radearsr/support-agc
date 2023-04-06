@@ -11,9 +11,11 @@ const getMangaWithSplitChar = async (endpoint, character, maxData) => {
 
   if (character === "all") {
     $(".series").each((idx, el) => {
-      const title = $(el).text();
+      let title = $(el).text();
       const link = $(el).attr("href");
       if (resultLists.length < maxData) {
+        title = title.replace(/Bahasa Indonesia|bahasa indonesia|Indonesia/g, '').trim();
+        title = title.replace(/’/g, '\'');
         resultLists.push({
           title,
           link,
