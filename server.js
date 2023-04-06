@@ -2,9 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const { Cron } = require("croner");
 const path = require("path");
+const actionAgcService = require("./services/actionAgcServices");
+const localMysqlServices = require("./services/localMysqlServices");
+const telegramService = require("./services/telegramService");
 
-let currentPattern = "* */1 * * *";
 const app = express();
 
 app.set("view engine", "ejs");
@@ -31,3 +34,21 @@ app.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });
 
+Cron("0 0 */4 * * *", { timezone: "Asia/Jakarta" }, async () => {
+  try {
+    const settings = await localMysqlServices.getSettingWithoutUserId();
+    const mangaLists = await localMysqlServices.getDataAllListsMangaASC();
+    await telegramService.senderNofitication(settings.telegramId, "Monitoring Start");
+    mangaLists.forEach((list, idx) => {
+      setTimeout(() => {
+        actionAgcService.cronActionPublish(settings.linkAgc,{
+         title: list.title,
+         link: list.link,
+        }, settings.emailAgc, settings.passwordAgc, settings.linkWordpress, settings.telegramId);
+      }, 15000 * idx)
+    });
+  } catch (error) {
+    console.log(error.message);
+    console.error(error);
+  }
+});

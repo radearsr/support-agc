@@ -149,12 +149,12 @@ exports.getCountAllListsManga = async (keyword) => {
   return results[0].total_data; 
 };
 
-exports.getDataAllListsMangaASC = async (limit) => {
+exports.getDataAllListsMangaASC = async () => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "SELECT * FROM lists WHERE status='1' ORDER BY createdAt ASC LIMIT ?";
-  const sqlEscapeVal = [[limit]];
+  const sqlString = "SELECT * FROM lists WHERE status='1' ORDER BY createdAt ASC";
+  // const sqlEscapeVal = [[limit]];
   // console.info(logging(sqlString, sqlEscapeVal));
-  const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  const results = await queryDatabase(conn, sqlString);
   if (results.length < 1) throw new NotFoundError("lists manga tidak ditemukan");
   return results;
 };
