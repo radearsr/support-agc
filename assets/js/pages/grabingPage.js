@@ -100,6 +100,7 @@ const insertListManga = async (targetEl) => {
 };
 
 const insertListMangaBulk = async (data) => {
+  const tbody = document.querySelector("#bodyTable");
   const response = await fetch("/manga/add/bulk", {
     method: "POST",
     headers: {
@@ -110,7 +111,9 @@ const insertListMangaBulk = async (data) => {
   });
   const result = await response.json();
   toastController(result.status, result.message);
-  loadingInsertAll.classList.add("d-none")
+  loadingInsertAll.classList.add("d-none");
+  tbody.innerHTML = "";
+  sectionResult.classList.add("d-none");
 };
 
 const listsResultMangaAction = () => {
@@ -196,7 +199,7 @@ formFinder.addEventListener("submit", async (event) => {
       });
     }
   });
-  console.log(payload);
+  // console.log(payload);
   if (Object.keys(payload).length >= minData) {
     let listsManga;
     if (minData === 3) {
@@ -212,10 +215,10 @@ formFinder.addEventListener("submit", async (event) => {
 
 // Publish All Button Action
 buttonInsertAll.addEventListener("click", async () => {
-  console.log(loadingInsertAll)
+  // console.log(loadingInsertAll)
   loadingInsertAll.classList.remove("d-none");
   const inputCheckInTables = document.querySelectorAll("input[name='checkMangaList']");
-  console.log(inputCheckInTables[0]);
+  // console.log(inputCheckInTables[0]);
   const resultPayload = [];
 
   inputCheckInTables.forEach((inputCheck) => {

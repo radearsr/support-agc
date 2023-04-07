@@ -1,4 +1,23 @@
 const { serialize, unserialize } = require("php-serialize");
+const { Console } = require("console");
+const fs = require("fs");
+const path = require("path");
+
+// Create My Own Logging
+exports.logging = new Console({
+  stdout: fs.createWriteStream(path.join(__dirname, "../errorLog/accessLog.log")),
+  stderr: fs.createWriteStream(path.join(__dirname, "../errorLog/errorLog.log")), 
+});
+
+exports.currentFormatDate = () => {
+  const date = new Date();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  const strTime = `${hours}:${minutes}:${seconds}`;
+  return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${strTime}`;
+};
 
 exports.restructureObject = (data) => {
   const renamedData = {}

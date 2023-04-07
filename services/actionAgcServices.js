@@ -33,6 +33,8 @@ const mangaPublish = async (data, linkWordpress) => {
     await wpMysqlServices.insertPostMeta(sDataForInsertPostMeta);
     return idFirstPost;
   } catch (error) {
+    utils.logging.error(utils.currentFormatDate());
+    utils.logging.error(error);
     throw new Error(error.message);
   }
 };
@@ -78,7 +80,8 @@ const publishChapter = async (data, parentPostId, urlWordpress) => {
     // Update or Create Post Meta Field ero_latest
     await wpMysqlServices.updateOrCreateEroLatestChapter(parentPostId, restructureErolatest);
   } catch (error) {
-    console.error(error);
+    utils.logging.error(utils.currentFormatDate());
+    utils.logging.error(error);
     throw new Error(error.message);
   }
 };
@@ -102,6 +105,7 @@ const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, te
       }
       await telegramServices.senderSuccessUpdateManga(telegramId, listManga.title, currentTotalChapters, liveMangaChapters.length, `${linkWp}/?p=${eroSeries}`);
     } else {
+      await telegramServices.senderMangaUptoDate(telegramId, listManga.title, liveMangaChapters.length, `${linkWp}/?p=${eroSeries}`)
       console.log("CHAPTER_UP_TO_DATE");
     }
   } catch (error) {
@@ -113,7 +117,8 @@ const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, te
       });
       telegramServices.senderSuccessPostManga(telegramId, listManga.title, liveMangaChapters.length, `${linkWp}/?p=${publishedMangaId}`);
     }
-    console.error(error);
+    utils.logging.error(utils.currentFormatDate());
+    utils.logging.error(error);
   }
 };
 

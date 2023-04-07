@@ -7,6 +7,7 @@ const path = require("path");
 const actionAgcService = require("./services/actionAgcServices");
 const localMysqlServices = require("./services/localMysqlServices");
 const telegramService = require("./services/telegramService");
+const utils = require("./services/utils");
 
 const app = express();
 
@@ -36,19 +37,22 @@ app.listen(port, () => {
 
 Cron("0 0 */4 * * *", { timezone: "Asia/Jakarta" }, async () => {
   try {
+    utils.logging.log(utils.currentFormatDate());
+    utils.logging.log("Cron Is Running");
     const settings = await localMysqlServices.getSettingWithoutUserId();
     const mangaLists = await localMysqlServices.getDataAllListsMangaASC();
-    await telegramService.senderNofitication(settings.telegramId, "Monitoring Start");
+    await telegramService.senderNofitication("1047449361", "Monitoring Manga Start");
+    await telegramService.senderNofitication(settings.telegramId, "Monitoring Manga Start");
     mangaLists.forEach((list, idx) => {
       setTimeout(() => {
         actionAgcService.cronActionPublish(settings.linkAgc,{
          title: list.title,
          link: list.link,
         }, settings.emailAgc, settings.passwordAgc, settings.linkWordpress, settings.telegramId);
-      }, 15000 * idx)
+      }, 6000 * idx)
     });
   } catch (error) {
-    console.log(error.message);
+    utils.logging.error(error);
     console.error(error);
   }
 });

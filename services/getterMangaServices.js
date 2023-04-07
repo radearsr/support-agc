@@ -1,4 +1,5 @@
 require("dotenv").config();
+const mysql = require("mysql");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const NotFoundError = require("../exceptions/NotFoundError");
@@ -39,6 +40,30 @@ const getMangaWithSplitChar = async (endpoint, character, maxData) => {
   if (resultLists.length < 1) throw new NotFoundError("Lists manga tidak ditemukan");
   return resultLists;
 };
+
+const getMangaGenres = async (endpoint) => {
+  const { data } = await axios.get(`${endpoint}/manga/`);
+  const $ = cheerio.load(data);
+  const resultLists = [];
+
+  $(".genre-item").each((idx, el) => {
+    const id = $(el).attr("value");
+    const name = $(el).next().text();
+    resultLists.push([
+      id,
+      name,
+    ]);
+  });
+  if (resultLists.length < 1) throw new NotFoundError("Lists genre tidak ditemukan");
+  return resultLists;
+};
+
+// (async () => {
+//   const result = await getMangaGenres("https://kiryuu.id/");
+//   const conn = await connectToDatabase(configDB);
+//   const query = await queryDatabase(conn, "INSERT INTO manga_genres (id_genre, name) VALUES ?", [result]);
+//   console.log(query);
+// })()
 
 const getMangaWithCategory = async (endpoint, genresId="all", status, type, order) => {
   let dataHtml;
