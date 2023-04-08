@@ -31,6 +31,7 @@ const writeCookieToFile = (key, token="") => {
 };
 
 const getSessionAndTokenForLogin = async (endpoint) => {
+  console.log({ endpoint })
   const response = await axios({
     method: "get",
     url: `${endpoint}/login`,
@@ -268,9 +269,9 @@ exports.getTokenAndGetChapterManga = async (endpoint, linkChapter, email, passwo
     const response = await getMangaChapter(cookie, linkChapter, "", endpoint);
     return response.result;
   } catch (error) {
-    // console.error(error.response);
+    console.log({ endpoint, linkChapter, email, password })
     if (error.response.status === 401 && error.response.data.message === "Unauthenticated.") {
-      const { cookie: key, csrf } = await getSessionAndTokenForLogin();
+      const { cookie: key, csrf } = await getSessionAndTokenForLogin(endpoint);
       const cookie = await loginAndGetSessionCookie(key, {
         token: csrf,
         email,
@@ -278,7 +279,7 @@ exports.getTokenAndGetChapterManga = async (endpoint, linkChapter, email, passwo
       }, endpoint);
       const csrfForPublish = await getSessionAndToken(cookie, endpoint);
       await writeCookieToFile(cookie, csrfForPublish);
-      const response = await getMangaChapter(cookie, urlChapter, "", endpoint);
+      const response = await getMangaChapter(cookie, linkChapter, "", endpoint);
       return response.result;
     }
     // console.error(error);

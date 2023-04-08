@@ -549,3 +549,14 @@ exports.getTotalChapterWhereEroSeri = async (eroSeri) => {
   if (result[0].total_chapters < 1) throw new Error("MYSQL_COUNT_POST_META");
   return result[0].total_chapters;
 };
+
+exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `SELECT ID, post_title FROM ${PREFIXDB}_posts WHERE post_type=? ORDER BY post_date ${orderBy}`;
+  const sqlEscapeVal = [[postType]];
+  // console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
+  return result;
+};
+

@@ -93,7 +93,45 @@ const getMangaWithCategory = async (endpoint, genresId="all", status, type, orde
   return resultLists;
 };
 
+const getSearchMangagekoByTitle = async (endpoint, title) => {
+  const { data } = await axios.get(`${endpoint}/search/?search=${title}`);
+  // console.log(dataHtml);
+  // fs.writeFileSync("./index.html", data)
+  const $ = cheerio.load(data);
+  const resultLists = [];
+
+  $(".novel-item > a").each((_idx, el) => {
+    const titleScraped = $(el).attr("title");
+    const link = $(el).attr("href");
+    if (titleScraped.includes(title)) {
+      resultLists.push({
+        title: titleScraped,
+        link,
+      });
+    }
+  });
+  if (resultLists.length < 1) throw new NotFoundError(`Manga ${title} tidak ditemukan`);
+  return resultLists[0];
+};
+
+const getChapterByLinkSource = async (endpoint, path) => {
+  const { data } = await axios.get(`${endpoint}${path}`);
+  // console.log(dataHtml);
+  // fs.writeFileSync("./index.html", data)
+  const $ = cheerio.load(data);
+  const resultLists = [];
+
+  $(".chapter-list > li > a").each((_idx, el) => {
+    const link = $(el).attr("href");
+    resultLists.push(`${endpoint}${link}`);
+  });
+  if (resultLists.length < 1) throw new NotFoundError(`Chapter ${path} tidak ditemukan`);
+  return resultLists;
+};
+
 module.exports = {
   getMangaWithSplitChar,
   getMangaWithCategory,
+  getSearchMangagekoByTitle,
+  getChapterByLinkSource
 };

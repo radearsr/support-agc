@@ -1,5 +1,6 @@
 const wpMysqlServices = require("./wpMysqlServices");
 const getterAgcServices = require("../services/getterAgcServices");
+const getterMangaServices = require("./getterMangaServices");
 const telegramServices = require("./telegramService");
 const utils = require("./utils");
 
@@ -122,6 +123,50 @@ const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, te
   }
 };
 
+const cronMonitoringChapter = async (linkAgc, listManga, scrapEndpoint, email, password, linkWp, telegramId) => {
+  const mangaPage = await getterMangaServices.getSearchMangagekoByTitle(scrapEndpoint, listManga.title);
+  const liveChapter = await getterMangaServices.getChapterByLinkSource(scrapEndpoint, mangaPage.link);
+  try {
+    const currentTotalChapters = await wpMysqlServices.getTotalChapterWhereEroSeri(listManga.id);
+    if (liveChapter.length > currentTotalChapters) {
+      for (let idx = currentTotalChapters; idx < liveChapter.length; idx++) {
+        const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, liveChapter[idx], email, password);
+        await publishChapter(chapterManga.data, listManga.id, linkWp);
+      }
+      await telegramServices.senderSuccessUpdateManga(telegramId, listManga.title, currentTotalChapters, liveChapter.length, `${linkWp}/?p=${listManga.id}`);
+    } else {
+      await telegramServices.senderMangaUptoDate(telegramId, listManga.title, liveChapter.length, `${linkWp}/?p=${listManga.id}`)
+      console.log("CHAPTER_UP_TO_DATE");
+    }
+  } catch (error) {
+    if (error.message === "MYSQL_COUNT_POST_META") {
+      for (let idx = 0; idx < liveChapter.length; idx++) {
+        const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, liveChapter[idx], email, password);
+        await publishChapter(chapterManga.data, listManga.id, linkWp);
+      }
+      await telegramServices.senderSuccessUpdateManga(telegramId, listManga.title, currentTotalChapters, liveChapter.length, `${linkWp}/?p=${listManga.id}`);
+    } else {
+      utils.logging.error(utils.currentFormatDate());
+      utils.logging.error(error);
+      console.log(error);
+    }
+  }
+}
+
+
+(async () => {
+  const listsManga = await wpMysqlServices.getAllPostMangaOrderByPostDate("manga", "ASC");
+  listsManga.forEach(async (val, idx) => {
+    setTimeout(async () => {
+      try {
+        await cronMonitoringChapter("https://scraping.manhwaa.my.id", { title: val.post_title, id: val.ID }, "https://www.mangageko.com", "lezhin@gmail.com", "Manhwaa123!@#", "https://manhwaa.my.id", 1047449361);
+      } catch (error) {
+        utils.logging.error(utils.currentFormatDate());
+        utils.logging.error(error);
+      }
+    }, idx * 2000);
+  })
+})();
 
 module.exports = {
   cronActionPublish,
