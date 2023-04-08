@@ -12,6 +12,8 @@ const configDB = mysql.createPool({
   database: process.env.WP_DATABASE,
 });
 
+// console.log(configDB);
+
 // Create Connection To Database
 const connectToDatabase = (pool) => (new Promise((resolve, reject) => {
   pool.getConnection((error, conn) => {
@@ -552,8 +554,18 @@ exports.getTotalChapterWhereEroSeri = async (eroSeri) => {
 
 exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT ID, post_title FROM ${PREFIXDB}_posts WHERE post_type=? ORDER BY post_date ${orderBy}`;
+  const sqlString = `SELECT ID, post_title FROM ${PREFIXDB}_posts WHERE post_type=? and post_title='0 Magic, a High Spirit, and a Demonic Sword' ORDER BY post_date ${orderBy} LIMIT 3`;
   const sqlEscapeVal = [[postType]];
+  console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
+  return result;
+};
+
+exports.getAllMangaWithPagin = async (skip, take, orderBy) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `SELECT ID, post_title, post_name, post_date FROM ${PREFIXDB}_posts WHERE post_type=? ORDER BY post_date ${orderBy} LIMIT ?, ?`;
+  const sqlEscapeVal = [[postType], [skip], [take]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
