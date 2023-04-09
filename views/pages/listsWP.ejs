@@ -102,7 +102,7 @@
                     <tr>
                       <th>No</th>
                       <th>Judul</th>
-                      <th>Last Chapter</th>
+                      <th>Chapter</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -117,7 +117,7 @@
                       <td><%= i + 1 %></td>
                       <td><%= lists[i].post_title %></td>
                       <td>
-                        <p class="badge bg-success">2</p>
+                        <p class="badge bg-success"><%= lists[i].chapter %></p>
                       </td>
                       <td class="text-center">
                         <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].post_title %>],,[<%= lists[i].ID %>">

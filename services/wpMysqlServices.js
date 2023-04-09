@@ -564,8 +564,8 @@ exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
 
 exports.getCountMangaWp = async (keyword) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT COUNT(*) AS total_data FROM ${PREFIXDB}_posts WHERE post_title LIKE ? AND post_type=?`;
-  const sqlEscapeVal = [[`%${keyword}%`], ["manga"]];
+  const sqlString = `SELECT COUNT(*) AS total_data FROM (SELECT DISTINCT(ID), post_title, post_name, post_date, COUNT(DISTINCT post_id) AS chapter FROM ${PREFIXDB}_posts AS wps JOIN ${PREFIXDB}_postmeta AS wpm ON wps.ID = wpm.meta_value WHERE post_type=? AND wpm.meta_key=? GROUP BY ID) AS mac`;
+  const sqlEscapeVal = [["manga"], ["ero_seri"], [`%${keyword}%`]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   return result[0].total_data;
@@ -573,8 +573,8 @@ exports.getCountMangaWp = async (keyword) => {
 
 exports.getAllMangaWpWithPagin = async (skip, take, keyword, orderBy) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT ID, post_title, post_name, post_date FROM ${PREFIXDB}_posts WHERE post_type=? AND post_title LIKE ? ORDER BY post_date ${orderBy} LIMIT ?, ?`;
-  const sqlEscapeVal = [["manga"], [`%${keyword}%`], [skip], [take]];
+  const sqlString = `SELECT DISTINCT(ID), post_title, post_name, post_date, COUNT(DISTINCT post_id) AS chapter FROM ${PREFIXDB}_posts AS wps JOIN ${PREFIXDB}_postmeta AS wpm ON wps.ID = wpm.meta_value WHERE post_type=? AND wpm.meta_key=? AND post_title LIKE ? GROUP BY ID ORDER BY post_date ${orderBy} LIMIT ?, ?`;
+  const sqlEscapeVal = [["manga"], ["ero_seri"], [`%${keyword}%`], [skip], [take]];
   console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
