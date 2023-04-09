@@ -14,6 +14,7 @@ router
   .get("/dashboard", middleware.checkUserCredentials, dashboardController.homePageController)
   .get("/dashboard/manga", middleware.checkUserCredentials, dashboardController.grabPageController)
   .get("/dashboard/lists", middleware.checkUserCredentials, dashboardController.listsPageController)
+  .get("/dashboard/listswp", middleware.checkUserCredentials, dashboardController.listsWpPageController)
   .get("/dashboard/account", middleware.checkUserCredentials, dashboardController.accountPageController)
   .get("/dashboard/settings", middleware.checkUserCredentials, dashboardController.settingPageController);
 

@@ -562,11 +562,20 @@ exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
   return result;
 };
 
-exports.getAllMangaWithPagin = async (skip, take, orderBy) => {
+exports.getCountMangaWp = async (keyword) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT ID, post_title, post_name, post_date FROM ${PREFIXDB}_posts WHERE post_type=? ORDER BY post_date ${orderBy} LIMIT ?, ?`;
-  const sqlEscapeVal = [[postType], [skip], [take]];
+  const sqlString = `SELECT COUNT(*) AS total_data FROM ${PREFIXDB}_posts WHERE post_title LIKE ? AND post_type=?`;
+  const sqlEscapeVal = [[`%${keyword}%`], ["manga"]];
   // console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  return result[0].total_data;
+};
+
+exports.getAllMangaWpWithPagin = async (skip, take, keyword, orderBy) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `SELECT ID, post_title, post_name, post_date FROM ${PREFIXDB}_posts WHERE post_type=? AND post_title LIKE ? ORDER BY post_date ${orderBy} LIMIT ?, ?`;
+  const sqlEscapeVal = [["manga"], [`%${keyword}%`], [skip], [take]];
+  console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
   return result;

@@ -123,7 +123,7 @@ const getChapterByLinkSource = async (endpoint, path) => {
 
   $(".chapter-list > li > a").each((_idx, el) => {
     const link = $(el).attr("href");
-    resultLists.push(`${endpoint}${link}`);
+    resultLists.unshift(`${endpoint}${link}`);
   });
   if (resultLists.length < 1) throw new NotFoundError(`Chapter ${path} tidak ditemukan`);
   return resultLists;

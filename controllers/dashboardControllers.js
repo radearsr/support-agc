@@ -1,4 +1,5 @@
 const localMysqlServices = require("../services/localMysqlServices");
+const wpMysqlServices = require("../services/wpMysqlServices");
 const securityServices = require("../services/securityServices");
 const grabbingServices = require("../services/getterMangaServices");
 const ClientError = require("../exceptions/ClientError");
@@ -91,6 +92,58 @@ const listsPageController = async (req, res) => {
       message: "Terjadi kegagalan pada server kami",
     });
   }
+};
+
+const listsWpPageController = async (req, res) => {
+  const {
+    fullname,
+    role,
+  } = req.session;
+  let { currentPage=1, pageSize=20, keyword="" } = req.query;
+  // console.log({ currentPage, pageSize });
+  currentPage = parseFloat(currentPage);
+  pageSize = parseFloat(pageSize);
+  try {
+    const totalData = await wpMysqlServices.getCountMangaWp(keyword);
+    const totalPage = Math.ceil(totalData / pageSize);
+    const skippedData = (currentPage * pageSize) - pageSize;
+    const resultLists = await wpMysqlServices.getAllMangaWpWithPagin(skippedData, pageSize, keyword, "ASC")
+    res.render("pages/listsWP", {
+      title: "Lists Wordpress - Dashboard Support AGC",
+      fullName: fullname,
+      roleName: role,
+      activePage: "ListsWP",
+      lists: resultLists,
+      pages: {
+        currentPage,
+        totalPage,
+        pageSize,
+      }
+    });
+  } catch (error) {
+    if (error instanceof ClientError) {
+      res.statusCode = error.statusCode;
+      return res.render("pages/listsWP", {
+        title: "Lists Wordpress - Dashboard Support AGC",
+        fullName: fullname,
+        roleName: role,
+        activePage: "ListsWP",
+        lists: [],
+        msg: error.message,
+        pages: {
+          currentPage: 0,
+          pageSize: 0,
+          totalPage: 0,
+        }
+      });
+    }
+    console.log(error);
+    res.statusCode = 500;
+    res.json({
+      status: "error",
+      message: "Terjadi kegagalan pada server kami",
+    });
+  } 
 };
 
 const settingPageController = async (req, res) => {
@@ -322,6 +375,7 @@ module.exports = {
   homePageController,
   grabPageController,
   listsPageController,
+  listsWpPageController,
   settingPageController,
   accountPageController,
   postAccountController,

@@ -98,7 +98,7 @@ const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, te
     const currentTotalChapters = await wpMysqlServices.getTotalChapterWhereEroSeri(eroSeries);
     // console.log({ chapters: liveMangaChapters.length, currentTotalChapters })
     if (liveMangaChapters.length > currentTotalChapters) {
-      for (let idx = currentTotalChapters + 1; idx < liveMangaChapters.length; idx++) {
+      for (let idx = currentTotalChapters; idx < liveMangaChapters.length; idx++) {
         setTimeout(async () => {
           const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, liveMangaChapters[idx].read_link, email, password);
           await publishChapter(chapterManga.data, eroSeries, linkWp);
@@ -130,7 +130,7 @@ const cronMonitoringChapter = async (linkAgc, listManga, scrapEndpoint, email, p
   try {
     const currentTotalChapters = await wpMysqlServices.getTotalChapterWhereEroSeri(listManga.id);
     if (liveChapter.length > currentTotalChapters) {
-      for (let idx = currentTotalChapters + 1; idx <= liveChapter.length; idx++) {
+      for (let idx = currentTotalChapters; idx < liveChapter.length; idx++) {
         const chapterManga = await getterAgcServices.getTokenAndGetChapterManga(linkAgc, liveChapter[idx], email, password);
         await publishChapter(chapterManga.data, listManga.id, linkWp);
       }
@@ -155,19 +155,19 @@ const cronMonitoringChapter = async (linkAgc, listManga, scrapEndpoint, email, p
 }
 
 
-(async () => {
-  const listsManga = await wpMysqlServices.getAllPostMangaOrderByPostDate("manga", "ASC");
-  listsManga.forEach(async (val, idx) => {
-    setTimeout(async () => {
-      try {
-        await cronMonitoringChapter("https://scraping.manhwaa.my.id", { title: val.post_title, id: val.ID }, "https://www.mangageko.com", "lezhin@gmail.com", "Manhwaa123!@#", "https://mangakio.net", 1047449361);
-      } catch (error) {
-        utils.logging.error(utils.currentFormatDate());
-        utils.logging.error(error);
-      }
-    }, idx * 2000);
-  })
-})();
+// (async () => {
+//   const listsManga = await wpMysqlServices.getAllPostMangaOrderByPostDate("manga", "ASC");
+//   listsManga.forEach(async (val, idx) => {
+//     setTimeout(async () => {
+//       try {
+//         await cronMonitoringChapter("https://scraping.manhwaa.my.id", { title: val.post_title, id: val.ID }, "https://www.mangageko.com", "lezhin@gmail.com", "Manhwaa123!@#", "https://mangakio.net", 1047449361);
+//       } catch (error) {
+//         utils.logging.error(utils.currentFormatDate());
+//         utils.logging.error(error);
+//       }
+//     }, idx * 2000);
+//   })
+// })();
 
 module.exports = {
   cronActionPublish,

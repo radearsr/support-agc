@@ -102,8 +102,7 @@
                     <tr>
                       <th>No</th>
                       <th>Judul</th>
-                      <th>Link</th>
-                      <th>Status</th>
+                      <th>Last Chapter</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -116,16 +115,15 @@
                     <% for( let i = 0; i < lists.length; i++ ) { %>
                     <tr>
                       <td><%= i + 1 %></td>
-                      <td><%= lists[i].title %></td>
-                      <td><a href="<%= lists[i].link %>" target="_blank"><%= lists[i].link %></a></td>
+                      <td><%= lists[i].post_title %></td>
                       <td>
-                        <p class="badge <%= lists[i].status === "1" ? "bg-success" : "bg-danger" %>"><%= lists[i].status === "1" ? "Active" : "Inactive" %></p>
+                        <p class="badge bg-success">2</p>
                       </td>
                       <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].link %>],,[<%= lists[i].status %>],,[<%= lists[i].id %>">
+                        <button type="button" class="btn btn-sm btn-warning mb-1" data-bs-toggle="modal" data-bs-target="#modalEdit" data-bs-field="<%= lists[i].post_title %>],,[<%= lists[i].ID %>">
                           <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button type="submit" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].title %>],,[<%= lists[i].id %>">
+                        <button type="submit" class="btn btn-sm btn-danger mb-1" data-bs-toggle="modal" data-bs-target="#modalDelete" data-bs-field="<%= lists[i].post_title %>],,[<%= lists[i].ID %>">
                           <i class="bi bi-trash-fill"></i>
                         </button>
                       </td>
@@ -225,49 +223,6 @@
                 </div>
               </div>
             </div>
-            <div class="modal fade text-left" id="modalAdd" tabindex="-1" style="display: none;" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title">Tambah List</h4>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </button>
-                  </div>
-                  <form action="/dashboard/lists/add" method="post" id="form-modal-add">
-                    <div class="modal-body">
-                      <div class="alert d-none" id="alert-in-modal"></div>
-                      <label for="title-manga">Judul: </label>
-                      <div class="form-group">
-                        <input type="text" name="title" id="title-manga" placeholder="Lorem Ipsum" class="form-control">
-                      </div>
-                      <label for="link-manga">Link: </label>
-                      <div class="form-group">
-                        <input type="url" id="link-manga" name="link" placeholder="https://loremipsum.com" class="form-control">
-                      </div>
-                      <label for="status-manga">Status: </label>
-                      <div class="form-group">
-                        <select name="status" id="status-manga" class="form-select">
-                          <option value="1">Active</option>
-                          <option value="0">Non Active</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="modal-footer d- justify-content-center">
-                      <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
-                        <span class="d-none d-sm-block">Tutup</span>
-                      </button>
-                      <button type="submit" class="btn btn-orange ml-1">
-                        <span class="d-none d-sm-block">Simpan</span>
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
             <div class="modal fade text-left" id="modalDelete" tabindex="-1" style="display: none;" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
                 <div class="modal-content">
@@ -312,7 +267,6 @@
   </div>
   <script src="/assets/js/bootstrap.js"></script>
   <script src="/assets/js/app.js"></script>
-  <script src="/assets/js/pages/listsPage.js"></script>
 </body>
 
 </html>
