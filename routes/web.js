@@ -30,6 +30,7 @@ router
   .post("/manga/:listId/edit", dashboardController.putListMangaController)
   .post("/manga/:listId/delete", dashboardController.deleteListMangaController)
   .post("/dashboard/lists/add", dashboardController.addMangaFromList)
+  .post("/dashboard/listswp/:listId/edit", dashboardController.putListMangaWpController);
 
 router.all("*", (req, res) => {
   res.statusCode = 404;

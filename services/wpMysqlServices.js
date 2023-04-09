@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mysql = require("mysql");
 const slugs = require("slugs");
+const NotFoundError = require("../exceptions/NotFoundError");
 
 const PREFIXDB = process.env.PREFIX_WP;
 
@@ -564,7 +565,7 @@ exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
 
 exports.getCountMangaWp = async (keyword) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT COUNT(*) AS total_data FROM (SELECT DISTINCT(ID), post_title, post_name, post_date, COUNT(DISTINCT post_id) AS chapter FROM ${PREFIXDB}_posts AS wps JOIN ${PREFIXDB}_postmeta AS wpm ON wps.ID = wpm.meta_value WHERE post_type=? AND wpm.meta_key=? GROUP BY ID) AS mac`;
+  const sqlString = `SELECT COUNT(*) AS total_data FROM (SELECT DISTINCT(ID), post_title, post_name, post_date, COUNT(DISTINCT post_id) AS chapter FROM ${PREFIXDB}_posts AS wps JOIN ${PREFIXDB}_postmeta AS wpm ON wps.ID = wpm.meta_value WHERE post_type=? AND wpm.meta_key=? AND wps.post_title LIKE ? GROUP BY ID) AS mac`;
   const sqlEscapeVal = [["manga"], ["ero_seri"], [`%${keyword}%`]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
@@ -575,9 +576,19 @@ exports.getAllMangaWpWithPagin = async (skip, take, keyword, orderBy) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `SELECT DISTINCT(ID), post_title, post_name, post_date, COUNT(DISTINCT post_id) AS chapter FROM ${PREFIXDB}_posts AS wps JOIN ${PREFIXDB}_postmeta AS wpm ON wps.ID = wpm.meta_value WHERE post_type=? AND wpm.meta_key=? AND post_title LIKE ? GROUP BY ID ORDER BY post_date ${orderBy} LIMIT ?, ?`;
   const sqlEscapeVal = [["manga"], ["ero_seri"], [`%${keyword}%`], [skip], [take]];
+  // console.info(logging(sqlString, sqlEscapeVal));
+  const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
+  if (result.length < 1) throw new NotFoundError("List manga tidak ditemukan");
+  return result;
+};
+
+exports.updateMangaWpById = async (title, wpId) => {
+  const conn = await connectToDatabase(configDB);
+  const sqlString = `UPDATE ${PREFIXDB}_posts SET post_title=? WHERE ID=?`;
+  const sqlEscapeVal = [[title], [wpId]];
   console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
-  if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
+  if (result.length < 1) throw new NotFoundError("Gagal memperbarui manga wordpress");
   return result;
 };
 

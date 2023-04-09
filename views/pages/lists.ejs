@@ -96,6 +96,7 @@
                   </form>
                 </div>
               </div>
+
               <div class="table-responsive">
                 <table class="table table-striped mt-2" id="table1">
                   <thead>
@@ -138,7 +139,7 @@
                 <ul class="pagination justify-content-end">
                   <% if ((pages.totalPage > 3) && (pages.currentPage > 1)) { %>
                   <li class="page-item">
-                    <a class="page-link" href="?currentPage=1&pageSize=<%= pages.pageSize %>">
+                    <a class="page-link" href="?currentPage=1&pageSize=<%= pages.pageSize %>&keyword=<%= pages.keyword %>">
                       <span aria-hidden="true">
                         <i class="bi bi-chevron-double-left"></i>
                       </span>
@@ -146,7 +147,7 @@
                   </li>
                   <% } %>
                   <li class="page-item me-2  <%= pages.currentPage <= 1 ? "d-none" : "" %>">
-                    <a class="page-link" href="?currentPage=<%= pages.currentPage - 1 %>&pageSize=<%= pages.pageSize %>">
+                    <a class="page-link" id="link-start" href="?currentPage=<%= pages.currentPage - 1 %>&pageSize=<%= pages.pageSize %>&keyword=<%= pages.keyword %>">
                       <span aria-hidden="true">
                         <i class="bi bi-chevron-left"></i>
                       </span>
@@ -155,7 +156,7 @@
                   <% if (pages.totalPage < 3 && pages.totalPage > 1) { %>
                   <% for (let idx = 0; idx < pages.totalPage; idx++) { %>
                   <li class="page-item <%= pages.currentPage === idx + 1 ? "active" : ""%>">
-                    <a class="page-link" href="?currentPage=<%= idx + 1 %>&pageSize=<%= pages.pageSize %>">
+                    <a class="page-link" href="?currentPage=<%= idx + 1 %>&pageSize=<%= pages.pageSize %>&keyword=<%= pages.keyword %>">
                       <%= idx + 1 %>
                     </a>
                   </li>
@@ -163,16 +164,18 @@
                   <% } %>
                   <li class="page-item active"><a href="#" class="page-link"><%= pages.currentPage %></a></li>
                   <li class="page-item d-flex align-items-center ms-1">of <%= pages.totalPage %></li>
-                  <li class="page-item ms-2 <%= pages.currentPage ===  pages.totalPage ? "d-none" : "" %>"">
-                    <a class=" page-link" href="?currentPage=<%= pages.currentPage + 1 %>&pageSize=<%= pages.pageSize %>">
-                    <span aria-hidden="true">
-                      <i class="bi bi-chevron-right"></i>
-                    </span>
-                    </a>
-                  </li>
+                  <% if (!(pages.totalPage <= 1 || pages.totalPage > 3)) { %>
+                    <li class="page-item me-2 ">
+                      <a class="page-link" href="?currentPage=<%= pages.currentPage - 1 %>&pageSize=<%= pages.pageSize %>&keyword=<%= pages.keyword %>">
+                        <span aria-hidden="true">
+                          <i class="bi bi-chevron-left"></i>
+                        </span>
+                      </a>
+                    </li>
+                  <% } %>
                   <% if ((pages.totalPage > 3) && (pages.currentPage < pages.totalPage)) { %>
                   <li class="page-item">
-                    <a class="page-link" href="?currentPage=<%= pages.totalPage %>&pageSize=<%= pages.pageSize %>">
+                    <a class="page-link" href="?currentPage=<%= pages.totalPage %>&pageSize=<%= pages.pageSize %>&keyword=<%= pages.keyword %>">
                       <span aria-hidden="true">
                         <i class="bi bi-chevron-double-right"></i>
                       </span>

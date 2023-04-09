@@ -66,6 +66,7 @@ const listsPageController = async (req, res) => {
         currentPage,
         totalPage,
         pageSize,
+        keyword,
       }
     });
   } catch (error) {
@@ -82,6 +83,7 @@ const listsPageController = async (req, res) => {
           currentPage: 0,
           pageSize: 0,
           totalPage: 0,
+          keyword: "",
         }
       });
     }
@@ -118,6 +120,7 @@ const listsWpPageController = async (req, res) => {
         currentPage,
         totalPage,
         pageSize,
+        keyword,
       }
     });
   } catch (error) {
@@ -134,6 +137,7 @@ const listsWpPageController = async (req, res) => {
           currentPage: 0,
           pageSize: 0,
           totalPage: 0,
+          keyword: "",
         }
       });
     }
@@ -333,6 +337,20 @@ const deleteListMangaController = async (req, res) => {
   }
 };
 
+const putListMangaWpController = async (req, res) => {
+  try {
+    console.log(req.body);
+    console.log(req.params);
+    const { listId } = req.params;
+    const payload = req.body;
+    await wpMysqlServices.updateMangaWpById(payload.title, listId);
+    res.redirect("/dashboard/listswp"); 
+  } catch (error) {
+    console.error(error);
+    res.redirect("/dashboard/listswp");
+  }  
+}
+
 const postSettingController = async (req, res) => {
   try {
     const {
@@ -384,6 +402,7 @@ module.exports = {
   postAddNewMangaController,
   putListMangaController,
   deleteListMangaController,
+  putListMangaWpController,
   postAddNewMangaBulkController,
   postSettingController,
   addMangaFromList,

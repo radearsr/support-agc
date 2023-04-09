@@ -2,7 +2,6 @@ const modalEdit = document.querySelector("#modalEdit");
 const modalDelete = document.querySelector("#modalDelete");
 const modalAlert = document.getElementById("alert-in-modal");
 
-
 const showModalAlert = (bgClass, fgClass, message) => {
   modalAlert.classList.add("alert-light-success");
   modalAlert.classList.add("color-success");
@@ -74,7 +73,6 @@ modalEdit.addEventListener("show.bs.modal", (event) => {
   inputTitle.value = title;
   inputLink.value = link;
   selectStatus.value = status;
-
   formSubmit.setAttribute("action", `/manga/${listId}/edit`);
 });
 
