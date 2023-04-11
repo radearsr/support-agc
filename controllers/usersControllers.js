@@ -1,6 +1,8 @@
 const ClientError = require("../exceptions/ClientError");
 const localMysqlServices = require("../services/localMysqlServices");
 const securityServices = require("../services/securityServices");
+const { logging, currentFormatDate } = require("../services/utils");
+
 
 const currentPageStatus = {
   code: 200,
@@ -32,7 +34,7 @@ const postRegisterController = async (req, res) => {
     const payload = req.body;
     await localMysqlServices.checkAvailableEmail(payload.email);
     const hashedPassword = await securityServices.hashingPassword(payload.password);
-    const createdNewUser = await localMysqlServices.createNewUser({
+    await localMysqlServices.createNewUser({
       ...payload,
       password: hashedPassword,
     });
@@ -45,7 +47,8 @@ const postRegisterController = async (req, res) => {
       currentPageStatus.msg = error.message;
       return res.redirect("/register");
     }
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     currentPageStatus.code = 500;
     currentPageStatus.msg = "terjadi kegagalan pada server kami";
     return res.redirect("/register");
@@ -62,13 +65,15 @@ const postLoginController = async (req, res) => {
     req.session.userId = userCredential.id;
     req.session.fullname = userCredential.fullname;
     req.session.role = userCredential.role;
-    return res.redirect("/dashboard");
+    res.redirect("/dashboard");
   } catch (error) {
     if (error instanceof ClientError) {  
       currentPageStatus.code = error.statusCode;
       currentPageStatus.msg = error.message;
       return res.redirect("/login");
     }
+    logging.error(currentFormatDate());
+    logging.error(error);
     currentPageStatus.code = 500;
     currentPageStatus.msg = "Terjadi kegagalan pada server kami"
     return res.redirect("/login");

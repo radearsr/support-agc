@@ -126,7 +126,7 @@ exports.deleteMangaById = async (listId) => {
   console.info(logging(sqlString, sqlEscapeVal));
   const deletedManga = await queryDatabase(conn, sqlString, sqlEscapeVal);
   console.log(deletedManga);
-  if (insertedManga.affectedRows < 1) throw new InvariantError("Gagal Menghapus List");
+  if (deletedManga.affectedRows < 1) throw new InvariantError("Gagal Menghapus List");
 };
 
 exports.getDataAllListsManga = async (skip, keyword, take) => {
@@ -161,8 +161,8 @@ exports.getDataAllListsMangaASC = async () => {
 
 const insertSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "INSERT INTO settings (linkAgc, userId, emailAgc, passwordAgc, linkWordpress, telegramId) VALUES ?";
-  const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.linkWordpress, payload.idTelegram]]];
+  const sqlString = "INSERT INTO settings (linkAgc, userId, emailAgc, passwordAgc, linkWordpress, telegramId, monitType) VALUES ?";
+  const sqlEscapeVal = [[[payload.linkAgc, userId, payload.emailAgc, payload.passwordAgc, payload.linkWordpress, payload.idTelegram, payload.monitType]]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const results = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (results.affectedRows < 1) throw new InvariantError("Gagal menyimpan data");
@@ -171,8 +171,8 @@ const insertSetting = async (userId, payload) => {
 
 const updateSetting = async (userId, payload) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = "UPDATE settings SET linkAgc=?, emailAgc=?, passwordAgc=?, linkWordpress=?, telegramId=? WHERE userId=?";
-  const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.linkWordpress], [payload.idTelegram], [userId]];
+  const sqlString = "UPDATE settings SET linkAgc=?, emailAgc=?, passwordAgc=?, linkWordpress=?, telegramId=?, monitType=? WHERE userId=?";
+  const sqlEscapeVal = [[payload.linkAgc], [payload.emailAgc], [payload.passwordAgc], [payload.linkWordpress], [payload.idTelegram], [payload.monitType], [userId]];
   // console.info(logging(sqlString, sqlEscapeVal));
   const updatedSetting = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (updatedSetting.affectedRows < 1) throw new InvariantError("Gagal memperbarui setting");

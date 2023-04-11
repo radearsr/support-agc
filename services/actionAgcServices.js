@@ -2,6 +2,7 @@ const wpMysqlServices = require("./wpMysqlServices");
 const getterAgcServices = require("../services/getterAgcServices");
 const getterMangaServices = require("./getterMangaServices");
 const telegramServices = require("./telegramService");
+const ClientError = require("../exceptions/ClientError");
 const utils = require("./utils");
 
 const mangaPublish = async (data, linkWordpress) => {
@@ -87,7 +88,7 @@ const publishChapter = async (data, parentPostId, urlWordpress) => {
   }
 };
 
-const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, telegramId) => {
+const cronMonitoringInternal = async (linkAgc, listManga, email, password, linkWp, telegramId) => {
   // console.log({linkAgc, listManga, email, password, linkWp})
   const detailManga = await getterAgcServices.getTokenAndGetDetailManga(linkAgc, listManga.link, email, password);
   // Get And Post Manga Chapter
@@ -123,11 +124,11 @@ const cronActionPublish = async (linkAgc, listManga, email, password, linkWp, te
   }
 };
 
-const cronMonitoringChapter = async (linkAgc, listManga, scrapEndpoint, email, password, linkWp, telegramId) => {
-  const mangaPage = await getterMangaServices.getSearchMangagekoByTitle(scrapEndpoint, listManga.title);
-  const liveChapter = await getterMangaServices.getChapterByLinkSource(scrapEndpoint, mangaPage.link);
-  console.log(liveChapter);
+const cronMonitoringExternal = async (linkAgc, listManga, scrapEndpoint, email, password, linkWp, telegramId) => {
+  let liveChapter;
   try {
+    const mangaPage = await getterMangaServices.getSearchMangagekoByTitle(scrapEndpoint, listManga.title);
+    liveChapter = await getterMangaServices.getChapterByLinkSource(scrapEndpoint, mangaPage.link);
     const currentTotalChapters = await wpMysqlServices.getTotalChapterWhereEroSeri(listManga.id);
     if (liveChapter.length > currentTotalChapters) {
       for (let idx = currentTotalChapters; idx < liveChapter.length; idx++) {
@@ -146,29 +147,17 @@ const cronMonitoringChapter = async (linkAgc, listManga, scrapEndpoint, email, p
         await publishChapter(chapterManga.data, listManga.id, linkWp);
       }
       await telegramServices.senderSuccessUpdateManga(telegramId, listManga.title, currentTotalChapters, liveChapter.length, `${linkWp}/?p=${listManga.id}`);
-    } else {
-      utils.logging.error(utils.currentFormatDate());
+    } else if (error instanceof ClientError) {
+      telegramServices.senderMangaNotFound(telegramId, listManga.title)
+    }else {
+      console.error(error);
+      utils.logging.error(utils.currentFormatDate);
       utils.logging.error(error);
-      console.log(error);
     }
   }
 }
 
-
-// (async () => {
-//   const listsManga = await wpMysqlServices.getAllPostMangaOrderByPostDate("manga", "ASC");
-//   listsManga.forEach(async (val, idx) => {
-//     setTimeout(async () => {
-//       try {
-//         await cronMonitoringChapter("https://scraping.manhwaa.my.id", { title: val.post_title, id: val.ID }, "https://www.mangageko.com", "lezhin@gmail.com", "Manhwaa123!@#", "https://mangakio.net", 1047449361);
-//       } catch (error) {
-//         utils.logging.error(utils.currentFormatDate());
-//         utils.logging.error(error);
-//       }
-//     }, idx * 2000);
-//   })
-// })();
-
 module.exports = {
-  cronActionPublish,
+  cronMonitoringInternal,
+  cronMonitoringExternal,
 };

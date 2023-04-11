@@ -6,6 +6,7 @@ const { Cron } = require("croner");
 const path = require("path");
 const actionAgcService = require("./services/actionAgcServices");
 const localMysqlServices = require("./services/localMysqlServices");
+const wpMysqlServices = require("./services/wpMysqlServices");
 const telegramService = require("./services/telegramService");
 const utils = require("./services/utils");
 
@@ -40,17 +41,34 @@ Cron("0 0 */4 * * *", { timezone: "Asia/Jakarta" }, async () => {
     utils.logging.log(utils.currentFormatDate());
     utils.logging.log("Cron Is Running");
     const settings = await localMysqlServices.getSettingWithoutUserId();
-    const mangaLists = await localMysqlServices.getDataAllListsMangaASC();
     await telegramService.senderNofitication("1047449361", "Monitoring Manga Start");
     await telegramService.senderNofitication(settings.telegramId, "Monitoring Manga Start");
-    mangaLists.forEach((list, idx) => {
-      setTimeout(() => {
-        actionAgcService.cronActionPublish(settings.linkAgc,{
-         title: list.title,
-         link: list.link,
-        }, settings.emailAgc, settings.passwordAgc, settings.linkWordpress, settings.telegramId);
-      }, 6000 * idx)
-    });
+    if (settings.monitType === "INTR") {
+      const mangaLists = await localMysqlServices.getDataAllListsMangaASC();      
+      mangaLists.forEach((list, idx) => {
+        setTimeout(() => {
+          actionAgcService.cronMonitoringInternal(settings.linkAgc,{
+           title: list.title,
+           link: list.link,
+          }, settings.emailAgc, settings.passwordAgc, settings.linkWordpress, settings.telegramId);
+        }, idx * 6000);
+      });
+    } else {
+      const mangaWpLists = await wpMysqlServices.getAllPostMangaOrderByPostDate("manga", "ASC");
+      mangaWpLists.forEach(async (list, idx) => {
+        setTimeout(async () => {
+          try {
+            await cronMonitoringChapter(settings.linkAgc, {
+              title: list.post_title,
+              id: list.ID,
+            }, "https://www.mangageko.com", settings.emailAgc, settings.passwordAgc, settings.linkWordpress, settings.telegramId);
+          } catch (error) {
+            utils.logging.error(utils.currentFormatDate());
+            utils.logging.error(error);
+          }
+        }, idx * 6000);
+      });
+    }
   } catch (error) {
     utils.logging.error(error);
     console.error(error);

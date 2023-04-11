@@ -3,6 +3,7 @@ const wpMysqlServices = require("../services/wpMysqlServices");
 const securityServices = require("../services/securityServices");
 const grabbingServices = require("../services/getterMangaServices");
 const ClientError = require("../exceptions/ClientError");
+const { logging, currentFormatDate } = require("../services/utils");
 
 const currentPageStatus = {
   code: 200,
@@ -22,7 +23,8 @@ const homePageController = async (req, res) => {
       activePage: "Home",
     });
   } catch (error) {
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.redirect("/login");
   }
 };
@@ -87,7 +89,8 @@ const listsPageController = async (req, res) => {
         }
       });
     }
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -141,7 +144,8 @@ const listsWpPageController = async (req, res) => {
         }
       });
     }
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -166,6 +170,8 @@ const settingPageController = async (req, res) => {
       settings: result,
     });
   } catch (error) {
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.render("pages/setting", {
       title: "Setting - Dashboard Support AGC",
       fullName: fullname,
@@ -213,7 +219,8 @@ const postAccountController = async (req, res) => {
       currentPageStatus.msg = error.message;
       return res.redirect("/dashboard/account");
     }
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     currentPageStatus.code = 500;
     currentPageStatus.msg = "terjadi kegagalan pada server kami";
     return res.redirect("/dashboard/account");
@@ -237,6 +244,8 @@ const postGrebMangaWithCharController = async (req, res) => {
         message: error.message,
       });
     }
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -262,6 +271,8 @@ const postGrebMangaWithGenresController = async (req, res) => {
         message: error.message,
       });
     }
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -285,7 +296,8 @@ const postAddNewMangaController = async (req, res) => {
       message: `Berhasil menambahkan lists manga baru dengan ID ${addedManga.inserId}`,
     });
   } catch (error) {
-    console.error(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -305,7 +317,8 @@ const postAddNewMangaBulkController = async (req, res) => {
       message: `Berhasil menambahkan ${addedManga.affectedRows} lists manga`,
     });
   } catch (error) {
-    console.error(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.statusCode = 500;
     res.json({
       status: "error",
@@ -321,7 +334,8 @@ const putListMangaController = async (req, res) => {
     await localMysqlServices.updateMangaById(listId, payload);
     res.redirect("/dashboard/lists"); 
   } catch (error) {
-    console.error(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.redirect("/dashboard/lists");
   }
 };
@@ -332,7 +346,8 @@ const deleteListMangaController = async (req, res) => {
     await localMysqlServices.deleteMangaById(listId);
     res.redirect("/dashboard/lists"); 
   } catch (error) {
-    console.error(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.redirect("/dashboard/lists");
   }
 };
@@ -346,7 +361,8 @@ const putListMangaWpController = async (req, res) => {
     await wpMysqlServices.updateMangaWpById(payload.title, listId);
     res.redirect("/dashboard/listswp"); 
   } catch (error) {
-    console.error(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.redirect("/dashboard/listswp");
   }  
 }
@@ -357,14 +373,14 @@ const postSettingController = async (req, res) => {
       userId,
     } = req.session;
     const payload = req.body;
-    // console.log(payload);
     await localMysqlServices.createOrUpdateSetting(userId, payload);
     res.json({
       status: "success",
       msg: "Berhasil menambahkan setting",
     })
   } catch (error) {
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.json({
       status: "error",
       msg: "Terjadi kegagalan pada server",
@@ -383,7 +399,8 @@ const addMangaFromList = async (req, res) => {
     ]]);
     res.redirect("/dashboard/lists");
   } catch (error) {
-    console.log(error);
+    logging.error(currentFormatDate());
+    logging.error(error);
     res.redirect("/dashboard/lists");
   } 
 }

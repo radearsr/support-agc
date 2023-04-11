@@ -555,9 +555,9 @@ exports.getTotalChapterWhereEroSeri = async (eroSeri) => {
 
 exports.getAllPostMangaOrderByPostDate = async (postType, orderBy) => {
   const conn = await connectToDatabase(configDB);
-  const sqlString = `SELECT ID, post_title FROM ${PREFIXDB}_posts WHERE post_type=? and post_title='0 Magic, a High Spirit, and a Demonic Sword' ORDER BY post_date ${orderBy} LIMIT 3`;
-  const sqlEscapeVal = [[postType]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  const sqlString = `SELECT ID, post_title FROM ${PREFIXDB}_posts WHERE post_type=? ORDER BY post_date ${orderBy}`;
+  const sqlEscapeVal = [[postType], [orderBy]];
+  // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new Error("LISTS_MANGA_NOT_FOUND");
   return result;
@@ -586,7 +586,7 @@ exports.updateMangaWpById = async (title, wpId) => {
   const conn = await connectToDatabase(configDB);
   const sqlString = `UPDATE ${PREFIXDB}_posts SET post_title=? WHERE ID=?`;
   const sqlEscapeVal = [[title], [wpId]];
-  console.info(logging(sqlString, sqlEscapeVal));
+  // console.info(logging(sqlString, sqlEscapeVal));
   const result = await queryDatabase(conn, sqlString, sqlEscapeVal);
   if (result.length < 1) throw new NotFoundError("Gagal memperbarui manga wordpress");
   return result;

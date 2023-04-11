@@ -31,6 +31,16 @@ exports.senderMangaUptoDate = async (teleMessageId, title, chapter, linkPost) =>
   });
 };
 
+exports.senderMangaNotFound = async (teleMessageId, title) => {
+  const message = `⛔ Manga Tidak Ditemukan\n>>${title}<<\n`;
+  await axios.get(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`, {
+    params: {
+      chat_id: teleMessageId,
+      text: message,
+    }
+  });
+};
+
 exports.senderNofitication = async (teleMessageId, text) => {
   const message = `>> NOTIFIKASI <<\n${text}`;
   await axios.get(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`, {

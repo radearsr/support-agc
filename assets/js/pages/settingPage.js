@@ -43,6 +43,8 @@ formSetting.addEventListener("submit", async (evt) => {
   const passwordAgc = formData.get("passwordAgc");
   const linkWordpress = formData.get("linkWordpress");
   const idTelegram = formData.get("idTelegram");
+  const monitType = formData.get("monitType");
+  console.log(monitType);
 
   const insertedSetting = await postToInsertSetting({
     linkAgc,
@@ -50,6 +52,7 @@ formSetting.addEventListener("submit", async (evt) => {
     passwordAgc,
     linkWordpress,
     idTelegram,
+    monitType
   });
 
   const toast = new bootstrap.Toast(toastSetting);
